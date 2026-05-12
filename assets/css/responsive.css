@@ -1,0 +1,147 @@
+@media (max-width: 1024px) {
+    .sidebar {
+        transform: translateX(-100%);
+        z-index: 1000;
+        position: fixed;
+    }
+    .sidebar.open {
+        transform: translateX(0);
+        box-shadow: 4px 0 32px rgba(0,0,0,0.18);
+    }
+    .sidebar-close { display: block; }
+    .sidebar-overlay.active { display: block; }
+    .hamburger { display: flex; }
+    .main-wrapper { margin-left: 0; }
+    .listings-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+    .form-row { flex-direction: column; gap: 0; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .pro-filter-top { gap: 10px; }
+    .pro-filter-group { min-width: 120px; }
+}
+
+@media (max-width: 768px) {
+    .pro-filter-top {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+    .pro-filter-actions {
+        grid-column: 1 / -1;
+        justify-content: flex-start;
+    }
+    .pro-filter-amenities {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    .amenity-pill-row {
+        width: 100%;
+    }
+    .listings-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 14px;
+    }
+}
+
+@media (max-width: 640px) {
+    .main-content { padding: 14px 12px; }
+    .topbar { padding: 0 14px; }
+
+    .pro-filter-top {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+    .pro-filter-group:last-child {
+        grid-column: 1 / -1;
+    }
+    .pro-filter-actions {
+        grid-column: 1 / -1;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .listings-grid { grid-template-columns: 1fr; gap: 12px; }
+
+    .auth-card { padding: 24px 16px; margin: 12px; width: calc(100% - 24px); }
+    .auth-page { padding: 12px; align-items: flex-start; padding-top: 40px; }
+
+    .map-container { height: 320px; }
+
+    .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .stat-card { padding: 14px; }
+    .stat-value { font-size: 1.6rem; }
+
+    .section-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .section-header .btn { width: 100%; text-align: center; }
+
+    .profile-header { flex-direction: column; text-align: center; }
+    .profile-grid { grid-template-columns: 1fr; }
+
+    .modal {
+        max-width: 100%;
+        margin: 0;
+        border-radius: var(--radius) var(--radius) 0 0;
+        max-height: 88vh;
+        overflow-y: auto;
+    }
+    .modal-overlay { align-items: flex-end; padding: 0; }
+
+    .toast-container { left: 12px; right: 12px; bottom: 16px; }
+    .toast { min-width: unset; max-width: 100%; }
+
+    .data-table { font-size: 0.78rem; }
+    .data-table th, .data-table td { padding: 8px 8px; }
+
+    .tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 2px; }
+    .tab-btn { white-space: nowrap; padding: 9px 13px; font-size: 0.78rem; }
+
+    .btn-lg { width: 100%; }
+
+    .sidebar-header {
+        padding: 16px;
+    }
+    .sidebar-header svg {
+        width: 140px;
+        height: 46px;
+    }
+
+    .listing-card-image { height: 180px; }
+
+    .topbar-left .page-title { font-size: 0.95rem; }
+
+    .role-toggle-btn { font-size: 0.82rem; padding: 10px 6px; }
+
+    .login-toggle-btn { font-size: 0.82rem; padding: 11px 6px; }
+
+    h1 { font-size: 1.3rem; }
+    h2 { font-size: 1.1rem; }
+
+    .form-row { flex-direction: column; gap: 0; }
+
+    select.form-control, input.form-control {
+        font-size: 0.875rem;
+    }
+
+    .view-toggle { flex-shrink: 0; }
+    .view-toggle-btn { padding: 7px 12px; }
+}
+
+@media (max-width: 380px) {
+    .pro-filter-top {
+        grid-template-columns: 1fr;
+    }
+    .pro-filter-actions {
+        grid-column: 1;
+    }
+    .stat-value { font-size: 1.4rem; }
+    .listing-card-image { height: 160px; }
+}
+
+@media (min-width: 1400px) {
+    .main-content { padding: 32px 36px; }
+    .listings-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+}
+
+@media (min-width: 1600px) {
+    .listings-grid { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
+}
