@@ -19,9 +19,13 @@ if ($method === 'GET') {
             $params[] = (float) $_GET['rent_max'];
         }
 
-        if (!empty($_GET['type']) && in_array($_GET['type'], ['owner_direct', 'roommate_needed'])) {
-            $where[] = 'l.listing_type = ?';
-            $params[] = $_GET['type'];
+        // Global search by property name or address
+        if (!empty($_GET['q'])) {
+            $q = '%' . trim($_GET['q']) . '%';
+            $where[] = '(p.name LIKE ? OR p.address LIKE ? OR l.title LIKE ?)';
+            $params[] = $q;
+            $params[] = $q;
+            $params[] = $q;
         }
 
         if (!empty($_GET['amenities'])) {
@@ -56,9 +60,12 @@ if ($method === 'GET') {
 
         $sql = "SELECT l.id, l.title, l.listing_type, l.status, l.published_at,
                        r.rent_amount, r.capacity, r.current_occupancy, r.amenities_json,
-                       p.name AS property_name, p.location_lat, p.location_lng, p.address,
-                       u.full_name AS created_by_name,
-                       IF(sl.id IS NOT NULL, 1, 0) AS is_saved
+                       p.name AS property_name, p.location_lat, p.location_lng, p.address, p.image_path,
+                       u.full_name AS created_by_name, u.avatar_path AS creator_avatar,
+                       IF(sl.id IS NOT NULL, 1, 0) AS is_saved,
+                       (SELECT pi.image_path FROM property_images pi
+                        WHERE pi.property_id = p.id AND pi.is_cover = 1
+                        ORDER BY pi.id ASC LIMIT 1) AS cover_photo
                 FROM listings l
                 JOIN rooms r ON r.id = l.room_id AND r.is_active = 1
                 JOIN properties p ON p.id = r.property_id AND p.is_active = 1
@@ -66,7 +73,7 @@ if ($method === 'GET') {
                 LEFT JOIN saved_listings sl ON sl.listing_id = l.id AND sl.user_id = ?
                 WHERE {$whereSQL}
                 ORDER BY {$sort}
-                LIMIT 100";
+                LIMIT 120";
 
         $stmt = $db->prepare($sql);
         $stmt->execute(array_merge([$userId], $params));

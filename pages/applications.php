@@ -1,6 +1,6 @@
 <?php
 /**
- * UIU Nest — Applications (standalone section)
+ * UIU Nest â€” Applications (standalone section)
  * - Students/Applicants: see their own submitted applications
  * - Owners/House Managers: see all incoming applications for their listings
  */
@@ -11,7 +11,7 @@ requireLogin();
 $db  = getDB();
 $uid = (int)$_SESSION['user_id'];
 
-// ── Incoming applications (owner / house manager view) ──────────────────────
+// â”€â”€ Incoming applications (owner / house manager view) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $incomingApps = [];
 if (hasAnyRole(['owner', 'tenant', 'admin'])) {
     $stmt = $db->prepare(
@@ -26,13 +26,13 @@ if (hasAnyRole(['owner', 'tenant', 'admin'])) {
          JOIN properties p ON p.id = r.property_id
          JOIN users u    ON u.id = a.applicant_id
          WHERE l.created_by = ? AND a.deleted_at IS NULL
-         ORDER BY a.application_date DESC'
+         ORDER BY a.applied_at DESC'
     );
     $stmt->execute([$uid]);
     $incomingApps = $stmt->fetchAll();
 }
 
-// ── My submitted applications (student / applicant view) ────────────────────
+// â”€â”€ My submitted applications (student / applicant view) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $myApps = [];
 if (hasAnyRole(['student', 'tenant'])) {
     $stmt = $db->prepare(
@@ -44,13 +44,13 @@ if (hasAnyRole(['student', 'tenant'])) {
          JOIN rooms r    ON r.id = l.room_id
          JOIN properties p ON p.id = r.property_id
          WHERE a.applicant_id = ? AND a.deleted_at IS NULL
-         ORDER BY a.application_date DESC'
+         ORDER BY a.applied_at DESC'
     );
     $stmt->execute([$uid]);
     $myApps = $stmt->fetchAll();
 }
 
-// ── Detail view: single application ─────────────────────────────────────────
+// â”€â”€ Detail view: single application â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $detailApp  = null;
 $detailDocs = null;
 $detailUser = null;
@@ -109,10 +109,10 @@ function appStatusBadge(string $s): string {
 }
 ?>
 
-<?php if ($detailApp): // ── DETAIL VIEW ────────────────────────────────────────
+<?php if ($detailApp): // â”€â”€ DETAIL VIEW â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 ?>
 
-<a href="<?= APP_URL ?>/pages/applications.php" class="btn btn-ghost btn-sm" style="margin-bottom:16px;">← Back to Applications</a>
+<a href="<?= APP_URL ?>/pages/applications.php" class="btn btn-ghost btn-sm" style="margin-bottom:16px;">â† Back to Applications</a>
 
 <div style="display:grid;grid-template-columns:1fr 320px;gap:24px;align-items:start;">
 
@@ -169,7 +169,7 @@ function appStatusBadge(string $s): string {
         <?php endif; ?>
         <div class="profile-field">
           <label>Applied On</label>
-          <div class="value"><?= date('F j, Y', strtotime($detailApp['application_date'])) ?></div>
+          <div class="value"><?= date('F j, Y', strtotime($detailApp['applied_at'])) ?></div>
         </div>
       </div>
 
@@ -198,7 +198,7 @@ function appStatusBadge(string $s): string {
     <?php if ($detailDocs): ?>
     <div class="card">
       <div class="card-body">
-        <h3 style="margin-bottom:16px;">🪪 Identity Documents</h3>
+        <h3 style="margin-bottom:16px;">Identity Documents</h3>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;">
           <?php
           $docs = [
@@ -236,14 +236,14 @@ function appStatusBadge(string $s): string {
   <div>
     <div class="card card-glass" style="position:sticky;top:80px;">
       <div class="card-body">
-        <h3 style="margin-bottom:16px;">📋 Application Details</h3>
+        <h3 style="margin-bottom:16px;">Application Details</h3>
         <div style="display:flex;flex-direction:column;gap:12px;font-size:0.875rem;">
           <div><strong>Listing:</strong><br><?= htmlspecialchars($detailApp['listing_title']) ?></div>
           <div><strong>Property:</strong><br><?= htmlspecialchars($detailApp['property_name']) ?></div>
           <div><strong>Room:</strong> <?= htmlspecialchars($detailApp['room_number']) ?></div>
           <div><strong>Rent:</strong> <span style="color:var(--accent);font-weight:700;">৳<?= number_format($detailApp['rent_amount']) ?>/mo</span></div>
           <div><strong>Type:</strong>
-            <?= $detailApp['listing_type'] === 'roommate_needed' ? '👥 Roommate Needed' : '🏠 Owner Direct' ?>
+            <?= $detailApp['listing_type'] === 'roommate_needed' ? ' Roommate Needed' : 'ðŸ  Owner Direct' ?>
           </div>
           <div><strong>Status:</strong> <?= appStatusBadge($detailApp['status']) ?></div>
           <div><strong>Listed by:</strong> <?= htmlspecialchars($detailApp['listing_owner_name']) ?></div>
@@ -254,14 +254,14 @@ function appStatusBadge(string $s): string {
         <div style="margin-top:20px;display:flex;flex-direction:column;gap:10px;">
           <?php if (str_contains($detailApp['status'], 'pending')): ?>
             <button class="btn btn-success" style="width:100%;" onclick="updateStatus(<?= $appId ?>, 'enrolled')">
-              ✅ Enroll Applicant
+              Enroll Applicant
             </button>
             <button class="btn btn-danger" style="width:100%;" onclick="updateStatus(<?= $appId ?>, 'rejected_by_owner')">
-              ❌ Reject Application
+              âŒ Reject Application
             </button>
           <?php elseif ($detailApp['status'] === 'enrolled'): ?>
             <div style="padding:10px;background:var(--success-light);color:var(--success);border-radius:var(--radius-sm);text-align:center;">
-              ✅ Enrolled
+              Enrolled
             </div>
           <?php endif; ?>
         </div>
@@ -271,7 +271,7 @@ function appStatusBadge(string $s): string {
         <?php if ($detailApp['applicant_id'] == $uid && str_contains($detailApp['status'], 'pending')): ?>
         <div style="margin-top:20px;">
           <button class="btn btn-ghost" style="width:100%;color:var(--danger);" onclick="withdrawApp(<?= $appId ?>)">
-            🗑️ Withdraw Application
+            ðŸ—‘ï¸ Withdraw Application
           </button>
         </div>
         <?php endif; ?>
@@ -304,16 +304,16 @@ async function withdrawApp(id) {
 }
 </script>
 
-<?php else: // ── LIST VIEW ─────────────────────────────────────────────────────
+<?php else: // â”€â”€ LIST VIEW â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 ?>
 
 <!-- Tabs: Incoming vs My Applications -->
 <?php if (hasAnyRole(['owner','tenant']) && hasAnyRole(['student','tenant'])): ?>
 <div class="tabs">
     <button class="tab-btn <?= !isset($_GET['tab']) || $_GET['tab'] === 'incoming' ? 'active' : '' ?>"
-            onclick="switchTab('incoming')">📥 Incoming Applications</button>
+            onclick="switchTab('incoming')">Incoming Applications</button>
     <button class="tab-btn <?= isset($_GET['tab']) && $_GET['tab'] === 'my' ? 'active' : '' ?>"
-            onclick="switchTab('my')">📤 My Applications</button>
+            onclick="switchTab('my')">My Applications</button>
 </div>
 <?php endif; ?>
 
@@ -321,13 +321,13 @@ async function withdrawApp(id) {
 <?php if (hasAnyRole(['owner','tenant','admin']) && (!isset($_GET['tab']) || $_GET['tab'] === 'incoming')): ?>
 <div id="incomingTab">
   <div class="section-header">
-    <h2>📥 Incoming Applications</h2>
+    <h2>Incoming Applications</h2>
     <span style="color:var(--text-tertiary);font-size:0.9rem;"><?= count($incomingApps) ?> total</span>
   </div>
 
   <?php if (empty($incomingApps)): ?>
   <div class="empty-state">
-    <div class="empty-state-icon">📋</div>
+    <div class="empty-state-icon"></div>
     <h3>No applications yet</h3>
     <p>Applications for your listings will appear here.</p>
   </div>
@@ -347,14 +347,14 @@ async function withdrawApp(id) {
             <?= $app['year_of_study'] ? ' · Year ' . $app['year_of_study'] : '' ?>
           </div>
           <div style="font-size:0.85rem;margin-top:4px;">
-            🏢 <strong><?= htmlspecialchars($app['property_name']) ?></strong>
+            ðŸ¢ <strong><?= htmlspecialchars($app['property_name']) ?></strong>
             · <?= htmlspecialchars($app['listing_title']) ?>
           </div>
         </div>
         <div style="text-align:right;flex-shrink:0;">
           <?= appStatusBadge($app['status']) ?>
           <div style="font-size:0.75rem;color:var(--text-tertiary);margin-top:4px;">
-            <?= date('M j, Y', strtotime($app['application_date'])) ?>
+            <?= date('M j, Y', strtotime($app['applied_at'])) ?>
           </div>
           <div style="margin-top:8px;font-weight:700;color:var(--accent);">৳<?= number_format($app['rent_amount']) ?>/mo</div>
         </div>
@@ -370,13 +370,13 @@ async function withdrawApp(id) {
 <?php if (hasAnyRole(['student','tenant']) && isset($_GET['tab']) && $_GET['tab'] === 'my'): ?>
 <div id="myTab">
   <div class="section-header">
-    <h2>📤 My Applications</h2>
+    <h2>My Applications</h2>
     <span style="color:var(--text-tertiary);font-size:0.9rem;"><?= count($myApps) ?> total</span>
   </div>
 
   <?php if (empty($myApps)): ?>
   <div class="empty-state">
-    <div class="empty-state-icon">📤</div>
+    <div class="empty-state-icon"></div>
     <h3>No applications yet</h3>
     <p>Browse listings and apply for a room to see them here.</p>
     <a href="<?= APP_URL ?>/pages/dashboard.php" class="btn btn-primary" style="margin-top:16px;">Browse Listings</a>
@@ -386,17 +386,17 @@ async function withdrawApp(id) {
     <?php foreach ($myApps as $app): ?>
     <div class="card app-card" onclick="window.location='<?= APP_URL ?>/pages/applications.php?app_id=<?= $app['id'] ?>'" style="cursor:pointer;">
       <div class="card-body" style="display:flex;align-items:center;gap:16px;">
-        <div style="font-size:2.5rem;opacity:0.5;">🏠</div>
+        <div style="font-size:2.5rem;opacity:0.5;">ðŸ </div>
         <div style="flex:1;min-width:0;">
           <div style="font-weight:600;font-size:0.95rem;"><?= htmlspecialchars($app['listing_title']) ?></div>
           <div style="font-size:0.8rem;color:var(--text-tertiary);">
-            🏢 <?= htmlspecialchars($app['property_name']) ?> · Room <?= htmlspecialchars($app['room_number']) ?>
+            ðŸ¢ <?= htmlspecialchars($app['property_name']) ?> · Room <?= htmlspecialchars($app['room_number']) ?>
           </div>
         </div>
         <div style="text-align:right;flex-shrink:0;">
           <?= appStatusBadge($app['status']) ?>
           <div style="font-size:0.75rem;color:var(--text-tertiary);margin-top:4px;">
-            <?= date('M j, Y', strtotime($app['application_date'])) ?>
+            <?= date('M j, Y', strtotime($app['applied_at'])) ?>
           </div>
           <div style="margin-top:8px;font-weight:700;color:var(--accent);">৳<?= number_format($app['rent_amount']) ?>/mo</div>
         </div>
@@ -410,12 +410,12 @@ async function withdrawApp(id) {
 <?php elseif (hasRole('student') && !isset($_GET['tab'])): ?>
 <!-- Student-only view: just show their apps directly -->
 <div class="section-header">
-  <h2>📋 My Applications</h2>
+  <h2>My Applications</h2>
   <span style="color:var(--text-tertiary);font-size:0.9rem;"><?= count($myApps) ?> total</span>
 </div>
 <?php if (empty($myApps)): ?>
 <div class="empty-state">
-  <div class="empty-state-icon">📋</div>
+  <div class="empty-state-icon"></div>
   <h3>No applications yet</h3>
   <p>Browse listings and apply for a room to see them here.</p>
   <a href="<?= APP_URL ?>/pages/dashboard.php" class="btn btn-primary" style="margin-top:16px;">Browse Listings</a>
@@ -425,17 +425,17 @@ async function withdrawApp(id) {
   <?php foreach ($myApps as $app): ?>
   <div class="card app-card" onclick="window.location='<?= APP_URL ?>/pages/applications.php?app_id=<?= $app['id'] ?>'" style="cursor:pointer;">
     <div class="card-body" style="display:flex;align-items:center;gap:16px;">
-      <div style="font-size:2.5rem;opacity:0.5;">🏠</div>
+      <div style="font-size:2.5rem;opacity:0.5;">ðŸ </div>
       <div style="flex:1;min-width:0;">
         <div style="font-weight:600;font-size:0.95rem;"><?= htmlspecialchars($app['listing_title']) ?></div>
         <div style="font-size:0.8rem;color:var(--text-tertiary);">
-          🏢 <?= htmlspecialchars($app['property_name']) ?> · Room <?= htmlspecialchars($app['room_number']) ?>
+          ðŸ¢ <?= htmlspecialchars($app['property_name']) ?> · Room <?= htmlspecialchars($app['room_number']) ?>
         </div>
       </div>
       <div style="text-align:right;flex-shrink:0;">
         <?= appStatusBadge($app['status']) ?>
         <div style="font-size:0.75rem;color:var(--text-tertiary);margin-top:4px;">
-          <?= date('M j, Y', strtotime($app['application_date'])) ?>
+          <?= date('M j, Y', strtotime($app['applied_at'])) ?>
         </div>
         <div style="margin-top:8px;font-weight:700;color:var(--accent);">৳<?= number_format($app['rent_amount']) ?>/mo</div>
       </div>
@@ -462,3 +462,4 @@ function switchTab(tab) {
 </style>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
+

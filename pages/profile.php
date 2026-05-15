@@ -91,7 +91,9 @@ $roleBadgeClass = match($user['role']) {
             <?= strtoupper(substr($user['full_name'], 0, 1)) ?>
           </div>
         <?php endif; ?>
-        <label class="avatar-edit-btn" title="Change photo" for="avatarUpload">📷</label>
+        <label class="avatar-edit-btn" title="Change photo" for="avatarUpload">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </label>
         <input type="file" id="avatarUpload" accept="image/*" style="display:none" onchange="uploadAvatar(this)">
       </div>
 
@@ -100,8 +102,9 @@ $roleBadgeClass = match($user['role']) {
         <h2 class="profile-hero-name"><?= htmlspecialchars($user['full_name']) ?></h2>
         <span class="badge <?= $roleBadgeClass ?>" style="font-size:0.8rem;"><?= $roleLabel ?></span>
         <?php if (!empty($user['department'])): ?>
-          <span style="font-size:0.85rem;color:var(--text-tertiary);margin-left:8px;">
-            🎓 <?= htmlspecialchars($user['department']) ?>
+          <span style="font-size:0.85rem;color:var(--text-tertiary);margin-left:8px;display:inline-flex;align-items:center;gap:4px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+            <?= htmlspecialchars($user['department']) ?>
             <?= $user['year_of_study'] ? ' · Year ' . $user['year_of_study'] : '' ?>
           </span>
         <?php endif; ?>
@@ -111,8 +114,9 @@ $roleBadgeClass = match($user['role']) {
       </div>
 
       <!-- Edit Button -->
-      <button class="btn btn-outline btn-sm" onclick="Modal.open('editProfileModal')" style="margin-left:auto;align-self:start;">
-        ✏️ Edit Profile
+      <button class="btn btn-outline btn-sm" onclick="Modal.open('editProfileModal')" style="margin-left:auto;align-self:start;display:flex;align-items:center;gap:6px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Edit Profile
       </button>
     </div>
   </div>
@@ -162,7 +166,10 @@ $roleBadgeClass = match($user['role']) {
     <!-- Contact & Info -->
     <div class="card">
       <div class="card-body">
-        <h3 style="margin-bottom:18px;">👤 Personal Information</h3>
+        <h3 style="margin-bottom:18px;display:flex;align-items:center;gap:8px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;color:var(--accent);"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          Personal Information
+        </h3>
         <div style="display:flex;flex-direction:column;gap:14px;">
           <div class="profile-field">
             <label>Full Name</label>
@@ -214,7 +221,10 @@ $roleBadgeClass = match($user['role']) {
     <?php if ($currentRoom): ?>
     <div class="card">
       <div class="card-body">
-        <h3 style="margin-bottom:18px;">🏠 Current Accommodation</h3>
+        <h3 style="margin-bottom:18px;display:flex;align-items:center;gap:8px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;color:var(--accent);"><path d="M3 9.5L12 3l9 6.5V21H3V9.5z"/><rect x="9" y="14" width="6" height="7" rx="1"/></svg>
+          Current Accommodation
+        </h3>
         <div style="display:flex;flex-direction:column;gap:14px;">
           <div class="profile-field">
             <label>Property</label>
@@ -242,30 +252,40 @@ $roleBadgeClass = match($user['role']) {
     <?php elseif ($ownerStats): ?>
     <div class="card">
       <div class="card-body">
-        <h3 style="margin-bottom:18px;">🏢 Owner Summary</h3>
+        <h3 style="margin-bottom:18px;display:flex;align-items:center;gap:8px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;color:var(--accent);"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+          Owner Summary
+        </h3>
         <p style="color:var(--text-tertiary);font-size:0.9rem;margin-bottom:16px;">
           Manage your properties and listings from the sidebar.
         </p>
-        <a href="<?= APP_URL ?>/pages/manage-properties.php" class="btn btn-primary" style="width:100%;margin-bottom:10px;">
-          🏢 My Properties
+        <a href="<?= APP_URL ?>/pages/manage-properties.php" class="btn btn-primary" style="width:100%;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:6px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+          My Properties
         </a>
-        <a href="<?= APP_URL ?>/pages/manage-listings.php" class="btn btn-outline" style="width:100%;">
-          📝 My Listings
+        <a href="<?= APP_URL ?>/pages/manage-listings.php" class="btn btn-outline" style="width:100%;display:flex;align-items:center;justify-content:center;gap:6px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          My Listings
         </a>
       </div>
     </div>
     <?php else: ?>
     <div class="card">
       <div class="card-body">
-        <h3 style="margin-bottom:18px;">🔍 Find Housing</h3>
+        <h3 style="margin-bottom:18px;display:flex;align-items:center;gap:8px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;color:var(--accent);"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Find Housing
+        </h3>
         <p style="color:var(--text-tertiary);font-size:0.9rem;margin-bottom:16px;">
           Browse available listings near UIU campus and apply for a room.
         </p>
-        <a href="<?= APP_URL ?>/pages/dashboard.php" class="btn btn-primary" style="width:100%;margin-bottom:10px;">
-          🏘️ Browse Listings
+        <a href="<?= APP_URL ?>/pages/dashboard.php" class="btn btn-primary" style="width:100%;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:6px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M3 9.5L12 3l9 6.5V21H3V9.5z"/></svg>
+          Browse Listings
         </a>
-        <a href="<?= APP_URL ?>/pages/applications.php" class="btn btn-outline" style="width:100%;">
-          📋 My Applications
+        <a href="<?= APP_URL ?>/pages/applications.php" class="btn btn-outline" style="width:100%;display:flex;align-items:center;justify-content:center;gap:6px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          My Applications
         </a>
       </div>
     </div>
@@ -278,7 +298,9 @@ $roleBadgeClass = match($user['role']) {
   <div class="modal" style="max-width:560px;">
     <div class="modal-header">
       <h3>Edit Profile</h3>
-      <button class="modal-close" onclick="Modal.close('editProfileModal')">✕</button>
+      <button class="modal-close" onclick="Modal.close('editProfileModal')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:14px;height:14px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
     <div class="modal-body">
       <div class="form-group">

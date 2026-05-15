@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * UIU Nest — Public Resident Profile
  * Viewable by logged-in users. Shows a former resident's info and stay history.
@@ -15,7 +15,7 @@ $stmt = $db->prepare('SELECT * FROM users WHERE id = ? AND is_active = 1');
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
 if (!$user) {
-    echo '<div class="empty-state"><div class="empty-state-icon">👤</div><h3>Resident not found</h3></div>';
+    echo '<div class="empty-state"><div class="empty-state-icon"></div><h3>Resident not found</h3></div>';
     require_once __DIR__ . '/../includes/footer.php';
     exit;
 }
@@ -80,12 +80,12 @@ $roleBadgeClass = match($user['role']) {
         <?php endif; ?>
 
         <div style="display:flex;flex-direction:column;gap:10px;margin-top:16px;font-size:0.875rem;">
-          <div>📧 <?= htmlspecialchars($user['email']) ?></div>
-          <?php if ($user['phone']): ?><div>📞 <?= htmlspecialchars($user['phone']) ?></div><?php endif; ?>
-          <?php if ($user['student_id']): ?><div>🪪 <?= htmlspecialchars($user['student_id']) ?></div><?php endif; ?>
-          <?php if ($user['department']): ?><div>🎓 <?= htmlspecialchars($user['department']) ?><?= $user['year_of_study'] ? ' · Year ' . $user['year_of_study'] : '' ?></div><?php endif; ?>
-          <?php if ($user['gender']): ?><div>👤 <?= ucfirst($user['gender']) ?></div><?php endif; ?>
-          <div>📅 Member since <?= date('F Y', strtotime($user['created_at'])) ?></div>
+          <div> <?= htmlspecialchars($user['email']) ?></div>
+          <?php if ($user['phone']): ?><div> <?= htmlspecialchars($user['phone']) ?></div><?php endif; ?>
+          <?php if ($user['student_id']): ?><div>ID: <?= htmlspecialchars($user['student_id']) ?></div><?php endif; ?>
+          <?php if ($user['department']): ?><div> <?= htmlspecialchars($user['department']) ?><?= $user['year_of_study'] ? ' · Year ' . $user['year_of_study'] : '' ?></div><?php endif; ?>
+          <?php if ($user['gender']): ?><div> <?= ucfirst($user['gender']) ?></div><?php endif; ?>
+          <div> Member since <?= date('F Y', strtotime($user['created_at'])) ?></div>
         </div>
       </div>
     </div>
@@ -93,7 +93,7 @@ $roleBadgeClass = match($user['role']) {
     <!-- Stay Summary Card -->
     <div class="card" style="margin-top:16px;">
       <div class="card-body">
-        <h3 style="margin-bottom:16px;">📊 Stay Summary</h3>
+        <h3 style="margin-bottom:16px;"> Stay Summary</h3>
         <?php
           $totalMonths = 0;
           foreach ($history as $h) {
@@ -122,12 +122,12 @@ $roleBadgeClass = match($user['role']) {
   <!-- Right: Stay History Timeline -->
   <div>
     <div class="section-header" style="margin-bottom:16px;">
-      <h2>🏠 Residence History</h2>
+      <h2> Residence History</h2>
     </div>
 
     <?php if (empty($history)): ?>
     <div class="empty-state">
-      <div class="empty-state-icon">🏠</div>
+      <div class="empty-state-icon"></div>
       <h3>No residence history</h3>
     </div>
     <?php else: ?>
@@ -144,7 +144,7 @@ $roleBadgeClass = match($user['role']) {
           <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px;">
             <div>
               <h3 style="margin-bottom:4px;"><?= htmlspecialchars($h['property_name']) ?></h3>
-              <div style="font-size:0.85rem;color:var(--text-tertiary);">📍 <?= htmlspecialchars($h['address']) ?></div>
+              <div style="font-size:0.85rem;color:var(--text-tertiary);">📌 <?= htmlspecialchars($h['address']) ?></div>
             </div>
             <?php if ($isCurrent): ?>
               <span class="badge badge-published">Current</span>
@@ -153,9 +153,9 @@ $roleBadgeClass = match($user['role']) {
             <?php endif; ?>
           </div>
           <div style="display:flex;gap:20px;font-size:0.875rem;flex-wrap:wrap;">
-            <div>🚪 Room <strong><?= htmlspecialchars($h['room_number']) ?></strong></div>
-            <div>💰 <strong style="color:var(--accent);">৳<?= number_format($h['rent_amount']) ?>/mo</strong></div>
-            <div>📅 <?= $inDate->format('M j, Y') ?> → <?= $isCurrent ? '<span class="badge badge-published">Present</span>' : (new DateTime($h['moved_out_at']))->format('M j, Y') ?></div>
+            <div>Room <strong><?= htmlspecialchars($h['room_number']) ?></strong></div>
+            <div> <strong style="color:var(--accent);">৳<?= number_format($h['rent_amount']) ?>/mo</strong></div>
+            <div> <?= $inDate->format('M j, Y') ?> → <?= $isCurrent ? '<span class="badge badge-published">Present</span>' : (new DateTime($h['moved_out_at']))->format('M j, Y') ?></div>
             <div>⏱️ <?= $duration ?> month<?= $duration !== 1 ? 's' : '' ?></div>
           </div>
         </div>

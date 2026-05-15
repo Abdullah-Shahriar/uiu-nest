@@ -27,7 +27,7 @@ if ($method === 'GET') {
     $listings = $stmt->fetchAll();
 
     foreach ($listings as &$l) {
-        $l['distance_km'] = calculateDistance(UIU_LAT, UIU_LNG, (float)$l['location_lat'], (float)$l['location_lng']);
+        $l['distance_km'] = calculateDistance(UIU_LAT, UIU_LNG, (float) $l['location_lat'], (float) $l['location_lng']);
         $l['is_saved'] = true;
     }
 
@@ -38,10 +38,11 @@ if ($method === 'GET') {
 if ($method === 'POST') {
     requireLogin();
     $input = json_decode(file_get_contents('php://input'), true);
-    $listingId = (int)($input['listing_id'] ?? 0);
+    $listingId = (int) ($input['listing_id'] ?? 0);
     $userId = $_SESSION['user_id'];
 
-    if (!$listingId) jsonResponse(['error' => 'Listing ID required'], 400);
+    if (!$listingId)
+        jsonResponse(['error' => 'Listing ID required'], 400);
 
     // Check if already saved
     $stmt = $db->prepare('SELECT id FROM saved_listings WHERE user_id = ? AND listing_id = ?');
@@ -49,11 +50,11 @@ if ($method === 'POST') {
 
     if ($stmt->fetch()) {
         $db->prepare('DELETE FROM saved_listings WHERE user_id = ? AND listing_id = ?')
-           ->execute([$userId, $listingId]);
+            ->execute([$userId, $listingId]);
         jsonResponse(['saved' => false]);
     } else {
         $db->prepare('INSERT INTO saved_listings (user_id, listing_id) VALUES (?, ?)')
-           ->execute([$userId, $listingId]);
+            ->execute([$userId, $listingId]);
         jsonResponse(['saved' => true]);
     }
 }

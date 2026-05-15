@@ -1,5 +1,5 @@
-<?php
-/** UIU Nest — Applicant Profile (Owner/Tenant view) */
+﻿<?php
+/** UIU Nest â€” Applicant Profile (Owner/Tenant view) */
 $pageName = 'Applicant Profile';
 require_once __DIR__ . '/../includes/header.php';
 requireRole(['owner', 'tenant', 'admin']);
@@ -30,14 +30,14 @@ $docStmt->execute([$appId]);
 $docs = $docStmt->fetch();
 ?>
 
-<a href="<?= APP_URL ?>/pages/listing-detail.php?id=<?= $app['listing_id'] ?>" class="btn btn-ghost btn-sm" style="margin-bottom:16px;">← Back to Listing</a>
+<a href="<?= APP_URL ?>/pages/listing-detail.php?id=<?= $app['listing_id'] ?>" class="btn btn-ghost btn-sm" style="margin-bottom:16px;">â† Back to Listing</a>
 
 <div class="card">
     <div class="profile-header">
         <div class="profile-avatar-lg"><?= strtoupper(substr($app['full_name'], 0, 1)) ?></div>
         <div class="profile-details">
             <h2><?= sanitizeInput($app['full_name']) ?></h2>
-            <p><?= sanitizeInput($app['email']) ?> <?= $app['phone'] ? '· ' . sanitizeInput($app['phone']) : '' ?></p>
+            <p><?= sanitizeInput($app['email']) ?> <?= $app['phone'] ? 'Â· ' . sanitizeInput($app['phone']) : '' ?></p>
             <div style="margin-top:6px;">
                 <?= getAppStatusBadge($app['status']) ?>
             </div>
@@ -50,8 +50,8 @@ $docs = $docStmt->fetch();
         <div class="profile-field"><label>Year of Study</label><div class="value"><?= $app['year_of_study'] ? 'Year ' . $app['year_of_study'] : '-' ?></div></div>
         <div class="profile-field"><label>Gender</label><div class="value"><?= ucfirst($app['gender'] ?? '-') ?></div></div>
         <div class="profile-field"><label>Applied For</label><div class="value"><a href="<?= APP_URL ?>/pages/listing-detail.php?id=<?= $app['listing_id'] ?>"><?= sanitizeInput($app['listing_title']) ?></a></div></div>
-        <div class="profile-field"><label>Property / Room</label><div class="value"><?= sanitizeInput($app['property_name']) ?> — Room <?= sanitizeInput($app['room_number']) ?></div></div>
-        <div class="profile-field"><label>Applied On</label><div class="value"><?= date('M j, Y g:i A', strtotime($app['application_date'])) ?></div></div>
+        <div class="profile-field"><label>Property / Room</label><div class="value"><?= sanitizeInput($app['property_name']) ?> â€” Room <?= sanitizeInput($app['room_number']) ?></div></div>
+        <div class="profile-field"><label>Applied On</label><div class="value"><?= date('M j, Y g:i A', strtotime($app['applied_at'])) ?></div></div>
     </div>
 
     <?php if ($app['cover_message']): ?>
@@ -75,7 +75,7 @@ $docs = $docStmt->fetch();
 <?php if ($docs): ?>
 <div class="card" style="margin-top:20px;">
     <div class="card-body">
-        <h3 style="margin-bottom:16px;">📎 Verification Documents</h3>
+        <h3 style="margin-bottom:16px;">ðŸ“Ž Verification Documents</h3>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;">
             <div><label style="font-size:0.75rem;color:var(--text-tertiary);">ID Front</label><img src="<?= APP_URL ?>/<?= $docs['id_card_front'] ?>" style="width:100%;border-radius:var(--radius-sm);margin-top:6px;" alt="ID Front"></div>
             <div><label style="font-size:0.75rem;color:var(--text-tertiary);">ID Back</label><img src="<?= APP_URL ?>/<?= $docs['id_card_back'] ?>" style="width:100%;border-radius:var(--radius-sm);margin-top:6px;" alt="ID Back"></div>
@@ -90,8 +90,8 @@ $docs = $docStmt->fetch();
 <?php if (strpos($app['status'], 'pending') !== false): ?>
 <div class="card" style="margin-top:20px;">
     <div class="card-body" style="display:flex;gap:12px;justify-content:flex-end;">
-        <button class="btn btn-danger" onclick="updateApp('reject')">❌ Reject</button>
-        <button class="btn btn-success" onclick="updateApp('accept')">✅ Accept</button>
+        <button class="btn btn-danger" onclick="updateApp('reject')">âŒ Reject</button>
+        <button class="btn btn-success" onclick="updateApp('accept')">âœ… Accept</button>
     </div>
 </div>
 <?php endif; ?>
@@ -115,3 +115,4 @@ async function updateApp(action) {
 </script>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
+

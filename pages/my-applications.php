@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const el = document.getElementById('appsList');
 
         if (!apps.length) {
-            el.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><h3>No applications yet</h3><p>Browse listings and apply for rooms.</p></div>';
+            el.innerHTML = '<div class="empty-state"><div class="empty-state-icon"></div><h3>No applications yet</h3><p>Browse listings and apply for rooms.</p></div>';
             return;
         }
 
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <td>${escapeHtml(a.property_name)}</td>
                 <td>৳${Number(a.rent_amount).toLocaleString()}</td>
                 <td>${statusBadge(a.status)}</td>
-                <td><small>${new Date(a.application_date).toLocaleDateString()}</small></td>
+                <td><small>${new Date(a.applied_at).toLocaleDateString()}</small></td>
                 <td>${a.status.includes('pending') ? `<button class="btn btn-sm btn-ghost" onclick="withdrawApp(${a.id})">Withdraw</button>` : ''}</td>
             </tr>`).join('')}</tbody></table>`;
     } catch(e) {}
@@ -66,3 +66,4 @@ async function withdrawApp(id) {
 </script>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
+

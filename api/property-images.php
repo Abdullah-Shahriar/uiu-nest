@@ -62,6 +62,11 @@ if ($method === 'POST') {
 
         $ins = $db->prepare('INSERT INTO property_images (property_id, image_path, is_cover, sort_order) VALUES (?, ?, ?, ?)');
         $ins->execute([$propId, $relativePath, $isCover, $currentCount + $uploaded]);
+
+        // Sync cover photo to properties.image_path
+        if ($isCover) {
+            $db->prepare('UPDATE properties SET image_path = ? WHERE id = ?')->execute([$relativePath, $propId]);
+        }
         $uploaded++;
     }
 
@@ -96,11 +101,16 @@ if ($method === 'DELETE') {
 
     // If deleted image was cover, assign cover to next image
     if ($img['is_cover']) {
-        $next = $db->prepare('SELECT id FROM property_images WHERE property_id = ? ORDER BY sort_order ASC, id ASC LIMIT 1');
+        $next = $db->prepare('SELECT id, image_path FROM property_images WHERE property_id = ? ORDER BY sort_order ASC, id ASC LIMIT 1');
         $next->execute([$img['property_id']]);
         $nextImg = $next->fetch();
         if ($nextImg) {
             $db->prepare('UPDATE property_images SET is_cover = 1 WHERE id = ?')->execute([$nextImg['id']]);
+            // Sync new cover to properties.image_path
+            $db->prepare('UPDATE properties SET image_path = ? WHERE id = ?')->execute([$nextImg['image_path'], $img['property_id']]);
+        } else {
+            // No images left — clear properties.image_path
+            $db->prepare('UPDATE properties SET image_path = NULL WHERE id = ?')->execute([$img['property_id']]);
         }
     }
 

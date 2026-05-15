@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /** UIU Nest — Manage Properties (Owner) — with photo gallery upload */
 $pageName = 'Properties';
 require_once __DIR__ . '/../includes/header.php';
@@ -23,13 +23,13 @@ unset($p);
 ?>
 
 <div class="section-header">
-    <h2>🏢 My Properties</h2>
+    <h2> My Properties</h2>
     <button class="btn btn-primary btn-sm" onclick="Modal.open('addPropertyModal')">+ Add Property</button>
 </div>
 
 <?php if (empty($properties)): ?>
 <div class="empty-state">
-    <div class="empty-state-icon">🏢</div>
+    <div class="empty-state-icon"></div>
     <h3>No properties yet</h3>
     <p>Add your first property to start listing rooms.</p>
 </div>
@@ -43,13 +43,13 @@ unset($p);
         <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:16px;">
             <div>
                 <h3 style="margin-bottom:4px;"><?= htmlspecialchars($p['name']) ?></h3>
-                <div style="color:var(--text-tertiary);font-size:0.875rem;">📍 <?= htmlspecialchars($p['address']) ?></div>
+                <div style="color:var(--text-tertiary);font-size:0.875rem;">📌 <?= htmlspecialchars($p['address']) ?></div>
                 <?php if ($p['description']): ?>
                 <div style="font-size:0.85rem;color:var(--text-secondary);margin-top:6px;"><?= htmlspecialchars($p['description']) ?></div>
                 <?php endif; ?>
             </div>
             <div style="display:flex;gap:8px;flex-shrink:0;">
-                <button class="btn btn-sm btn-ghost" onclick="openEditProperty(<?= htmlspecialchars(json_encode($p)) ?>)">✏️ Edit</button>
+                <button class="btn btn-sm btn-ghost" onclick="openEditProperty(<?= htmlspecialchars(json_encode($p)) ?>)">Edit Edit</button>
                 <button class="btn btn-sm btn-outline" onclick="showAddRoom(<?= $p['id'] ?>)">+ Add Room</button>
             </div>
         </div>
@@ -58,7 +58,7 @@ unset($p);
     <!-- Photo Gallery Section -->
     <div style="padding:0 20px 16px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-            <div style="font-size:0.875rem;font-weight:600;color:var(--text-secondary);">📷 Property Photos</div>
+            <div style="font-size:0.875rem;font-weight:600;color:var(--text-secondary);"> Property Photos</div>
             <label class="btn btn-sm btn-ghost" style="cursor:pointer;">
                 + Add Photos
                 <input type="file" accept="image/*" multiple style="display:none;"
@@ -68,7 +68,7 @@ unset($p);
 
         <?php if (empty($p['images'])): ?>
         <div class="upload-box" onclick="this.querySelector('input').click()">
-            <div class="upload-box-icon">🖼️</div>
+            <div class="upload-box-icon"></div>
             <div style="font-size:0.875rem;color:var(--text-tertiary);">Click to add photos of this property</div>
             <input type="file" accept="image/*" multiple onchange="uploadPropertyPhotos(this, <?= $p['id'] ?>)">
         </div>
@@ -96,7 +96,7 @@ unset($p);
 
     <!-- Rooms Table -->
     <div style="padding:0 20px 20px;">
-        <div style="font-size:0.875rem;font-weight:600;color:var(--text-secondary);margin-bottom:10px;">🚪 Rooms</div>
+        <div style="font-size:0.875rem;font-weight:600;color:var(--text-secondary);margin-bottom:10px;">Rooms</div>
         <?php if (empty($p['rooms'])): ?>
         <p style="color:var(--text-tertiary);padding:16px 0;text-align:center;font-size:0.875rem;">No rooms added yet</p>
         <?php else: ?>
@@ -118,7 +118,7 @@ unset($p);
                     echo implode(', ', array_map(fn($a) => getAmenityLabel($a), array_slice($am, 0, 3)));
                     if (count($am) > 3) echo ' +' . (count($am) - 3);
                 ?></td>
-                <td><button class="btn btn-sm btn-ghost" onclick="openEditRoom(<?= htmlspecialchars(json_encode($r)) ?>)">✏️</button></td>
+                <td><button class="btn btn-sm btn-ghost" onclick="openEditRoom(<?= htmlspecialchars(json_encode($r)) ?>)">Edit</button></td>
             </tr>
             <?php endforeach; ?>
             </tbody>

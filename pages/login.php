@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 
@@ -11,211 +11,244 @@ if (isLoggedIn()) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Login to UIU Nest — Student housing near United International University">
-    <title>Login — UIU Nest</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta name="description" content="Sign in to UIU Nest — Student Accommodation Management System">
+    <title>Sign In — UIU Nest</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= APP_URL ?>/assets/css/style.css">
     <script>
         (function() {
-            var saved = localStorage.getItem('uiu-theme');
-            var theme = 'light';
-            if (saved) {
-                theme = saved;
-            } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                theme = 'dark';
-            }
-            document.documentElement.setAttribute('data-theme', theme);
+            var t = localStorage.getItem('uiu-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', t);
         })();
     </script>
     <style>
-        .login-toggle-wrap {
-            display: flex;
-            border: 1.5px solid var(--border);
-            border-radius: var(--radius);
-            overflow: hidden;
-            margin-bottom: 28px;
+        .login-wrap {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 480px;
         }
-        .login-toggle-btn {
-            flex: 1;
-            padding: 13px 10px;
-            background: transparent;
-            border: none;
-            cursor: pointer;
+        .login-hero {
+            background: linear-gradient(145deg, #0f1e3c 0%, #1e3a5f 40%, #1d4ed8 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        .login-hero::before {
+            content: '';
+            position: absolute;
+            width: 500px; height: 500px;
+            border-radius: 50%;
+            background: rgba(37,99,235,0.15);
+            top: -100px; right: -100px;
+        }
+        .login-hero::after {
+            content: '';
+            position: absolute;
+            width: 300px; height: 300px;
+            border-radius: 50%;
+            background: rgba(14,165,233,0.10);
+            bottom: -50px; left: -50px;
+        }
+        .login-hero-content { position: relative; z-index: 1; text-align: center; }
+        .hero-logo-icon {
+            width: 72px; height: 72px;
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.20);
+            border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2.2rem;
+            backdrop-filter: blur(10px);
+        }
+        .hero-name {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: -0.03em;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+        .hero-name span { color: #60a5fa; }
+        .hero-tagline {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.45);
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            margin-bottom: 32px;
+        }
+        .hero-features { display: flex; flex-direction: column; gap: 14px; text-align: left; }
+        .hero-feat {
+            display: flex; align-items: center; gap: 12px;
+            color: rgba(255,255,255,0.75);
             font-size: 0.9rem;
-            font-weight: 600;
-            font-family: inherit;
-            color: var(--text-tertiary);
-            transition: background 0.2s, color 0.2s;
+        }
+        .hero-feat-icon {
+            width: 36px; height: 36px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .login-form-panel {
+            background: var(--bg-secondary);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 7px;
+            padding: 40px 48px;
         }
-        .login-toggle-btn.active {
-            background: var(--accent);
-            color: #fff;
-        }
-        .login-toggle-btn:not(.active):hover {
-            background: var(--bg-tertiary);
+        .login-form-inner { width: 100%; max-width: 360px; }
+        .login-form-header { margin-bottom: 32px; }
+        .login-form-header h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
             color: var(--text-primary);
+            margin-bottom: 6px;
         }
-        .email-hint {
-            font-size: 0.78rem;
-            margin-top: 5px;
-            padding: 6px 10px;
+        .login-form-header p { font-size: 0.875rem; color: var(--text-tertiary); }
+
+        .pw-wrap { position: relative; }
+        .pw-eye {
+            position: absolute; right: 12px; top: 50%;
+            transform: translateY(-50%);
+            background: none; border: none; cursor: pointer;
+            color: var(--text-tertiary); font-size: 1rem; padding: 0;
+        }
+        .pw-eye:hover { color: var(--text-primary); }
+
+        .login-error {
+            display: none;
+            padding: 11px 14px;
+            background: var(--danger-light);
+            color: var(--danger);
             border-radius: var(--radius-sm);
+            margin-bottom: 16px;
+            font-size: 0.85rem;
+            border-left: 3px solid var(--danger);
         }
-        .email-hint-student {
-            background: var(--accent-light);
-            color: var(--accent);
+        .login-divider {
+            text-align: center;
+            font-size: 0.78rem;
+            color: var(--text-tertiary);
+            margin: 20px 0;
+            position: relative;
         }
-        .email-hint-owner {
-            background: var(--success-light);
-            color: var(--success);
+        .login-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 0; right: 0;
+            height: 1px;
+            background: var(--border);
+        }
+        .login-divider span {
+            background: var(--bg-secondary);
+            padding: 0 12px;
+            position: relative;
+        }
+
+        @media (max-width: 768px) {
+            .login-wrap { grid-template-columns: 1fr; }
+            .login-hero { display: none; }
+            .login-form-panel { padding: 32px 20px; align-items: flex-start; padding-top: 48px; }
         }
     </style>
 </head>
 <body>
-<div class="auth-page">
-    <div class="auth-card" style="max-width:440px;">
+<div class="login-wrap">
+    <!-- Hero panel -->
+    <div class="login-hero">
+        <div class="login-hero-content">
+            <div class="hero-logo-icon"></div>
+            <div class="hero-name">UIU<span>·</span>Nest</div>
+            <div class="hero-tagline">Student Accommodation Management</div>
+            <div class="hero-features">
+                <div class="hero-feat">
+                    <div class="hero-feat-icon"></div>
+                    <span>Verified properties near UIU campus</span>
+                </div>
+                <div class="hero-feat">
+                    <div class="hero-feat-icon"></div>
+                    <span>Streamlined application process</span>
+                </div>
+                <div class="hero-feat">
+                    <div class="hero-feat-icon"></div>
+                    <span>Secure identity verification</span>
+                </div>
+                <div class="hero-feat">
+                    <div class="hero-feat-icon">📌</div>
+                    <span>Interactive map with distance filter</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <div style="text-align:center;margin-bottom:20px;">
-            <a href="<?= APP_URL ?>/pages/dashboard.php" style="text-decoration:none;display:inline-block;">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 65" width="180" height="56" aria-label="UIU Nest">
-                    <g>
-                        <path d="M118 4 L138 18 L158 4" stroke="#E07820" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                        <path d="M122 18 L122 30 L154 30 L154 18" stroke="#E07820" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                        <rect x="132" y="22" width="10" height="8" rx="1.5" stroke="#E07820" stroke-width="1.6" fill="none"/>
-                    </g>
-                    <text x="2" y="36" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="28" fill="#E07820" letter-spacing="-0.5">UIU</text>
-                    <text x="70" y="36" font-family="Arial, sans-serif" font-weight="300" font-size="28" fill="#E07820" letter-spacing="1.5">NEST</text>
-                    <line x1="2" y1="41" x2="208" y2="41" stroke="#E07820" stroke-width="0.9" opacity="0.7"/>
-                    <text x="2" y="53" font-family="Arial, sans-serif" font-weight="400" font-size="6.5" fill="#E07820" letter-spacing="2">STUDENT ACCOMMODATION MANAGEMENT SYSTEM</text>
-                </svg>
+    <!-- Form panel -->
+    <div class="login-form-panel">
+        <div class="login-form-inner">
+            <div class="login-form-header">
+                <h2>Welcome back</h2>
+                <p>Sign in to your account to continue</p>
+            </div>
+
+            <div class="login-error" id="loginError"></div>
+
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label" for="loginEmail">Email Address</label>
+                    <input class="form-control" type="email" id="loginEmail"
+                        placeholder="you@uiu.ac.bd or you@gmail.com"
+                        required autocomplete="email">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="loginPassword">Password</label>
+                    <div class="pw-wrap">
+                        <input class="form-control" type="password" id="loginPassword"
+                            placeholder="••••••••" required autocomplete="current-password">
+                        <button type="button" class="pw-eye" onclick="togglePw()" id="pwEye">👁</button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg" id="loginBtn" style="width:100%;margin-top:8px;">
+                    Sign In
+                </button>
+            </form>
+
+            <div class="login-divider"><span>New to UIU Nest?</span></div>
+
+            <a href="<?= APP_URL ?>/pages/register.php" class="btn btn-outline btn-lg" style="width:100%;text-align:center;">
+                Create an Account
             </a>
-        </div>
 
-        <div class="login-toggle-wrap">
-            <button class="login-toggle-btn active" id="toggleStudent" onclick="switchLoginMode('student')" type="button">
-                🎓 Student
-            </button>
-            <button class="login-toggle-btn" id="toggleOwner" onclick="switchLoginMode('owner')" type="button">
-                🏢 Property Owner
-            </button>
-        </div>
-
-        <div id="loginHeader">
-            <h2 style="margin-bottom:4px;text-align:center;" id="loginTitle">Student Login</h2>
-            <p style="text-align:center;font-size:0.85rem;color:var(--text-tertiary);margin-bottom:20px;" id="loginSub">Sign in with your university email</p>
-        </div>
-
-        <div id="loginError" style="display:none;padding:11px 14px;background:var(--danger-light);color:var(--danger);border-radius:var(--radius-sm);margin-bottom:16px;font-size:0.85rem;"></div>
-
-        <form id="loginForm" onsubmit="handleLogin(event)">
-            <div class="form-group">
-                <label class="form-label" for="loginEmail">Email Address</label>
-                <input class="form-control" type="email" id="loginEmail"
-                    placeholder="you@uiu.ac.bd"
-                    required autocomplete="email">
-                <div class="email-hint email-hint-student" id="emailHint">
-                    🎓 Use your UIU university email (e.g. you@uiu.ac.bd)
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label" for="loginPassword">Password</label>
-                <div style="position:relative;">
-                    <input class="form-control" type="password" id="loginPassword"
-                        placeholder="••••••••" required autocomplete="current-password">
-                    <button type="button" onclick="togglePw()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-tertiary);padding:0;font-size:1rem;" id="pwEye">👁️</button>
-                </div>
-            </div>
-
-            <button type="submit" class="btn btn-primary btn-lg" id="loginBtn" style="width:100%;margin-top:4px;">
-                Sign In
-            </button>
-        </form>
-
-        <div style="text-align:center;margin-top:20px;font-size:0.875rem;color:var(--text-tertiary);">
-            Don't have an account?
-            <a href="<?= APP_URL ?>/pages/register.php" style="font-weight:600;">Sign Up</a>
-        </div>
-
-        <div id="ownerApplyLink" style="display:none;text-align:center;margin-top:12px;font-size:0.85rem;padding:12px;background:var(--bg-tertiary);border-radius:var(--radius-sm);border:1px solid var(--border);">
-            New owner? <a href="<?= APP_URL ?>/pages/register.php#owner" style="font-weight:600;">Apply for owner access →</a>
+            <p style="text-align:center;margin-top:16px;font-size:0.8rem;color:var(--text-tertiary);">
+                Your role (Student / Owner / Admin) is detected automatically from your account.
+            </p>
         </div>
     </div>
 </div>
 
+<div class="toast-container" id="toastContainer"></div>
+
 <script src="<?= APP_URL ?>/assets/js/app.js"></script>
 <script>
-var currentMode = 'student';
 var pwVisible = false;
-
-function switchLoginMode(mode) {
-    currentMode = mode;
-
-    var studentBtn  = document.getElementById('toggleStudent');
-    var ownerBtn    = document.getElementById('toggleOwner');
-    var titleEl     = document.getElementById('loginTitle');
-    var subEl       = document.getElementById('loginSub');
-    var emailInput  = document.getElementById('loginEmail');
-    var hintEl      = document.getElementById('emailHint');
-    var applyLink   = document.getElementById('ownerApplyLink');
-    var errEl       = document.getElementById('loginError');
-
-    errEl.style.display = 'none';
-
-    if (mode === 'student') {
-        studentBtn.classList.add('active');
-        ownerBtn.classList.remove('active');
-
-        titleEl.textContent = 'Student Login';
-        subEl.textContent = 'Sign in with your university email';
-
-        emailInput.placeholder = 'you@uiu.ac.bd';
-
-        hintEl.className = 'email-hint email-hint-student';
-        hintEl.textContent = '🎓 Use your UIU university email (e.g. you@uiu.ac.bd)';
-
-        applyLink.style.display = 'none';
-
-    } else {
-        ownerBtn.classList.add('active');
-        studentBtn.classList.remove('active');
-
-        titleEl.textContent = 'Owner Login';
-        subEl.textContent = 'Sign in with your registered email';
-
-        emailInput.placeholder = 'yourname@gmail.com';
-
-        hintEl.className = 'email-hint email-hint-owner';
-        hintEl.textContent = '🏢 No email restrictions for property owners';
-
-        applyLink.style.display = 'block';
-    }
-
-    emailInput.value = '';
-    emailInput.focus();
-}
-
 function togglePw() {
     var input = document.getElementById('loginPassword');
-    if (pwVisible) {
-        input.type = 'password';
-        pwVisible = false;
-    } else {
-        input.type = 'text';
-        pwVisible = true;
-    }
+    pwVisible = !pwVisible;
+    input.type = pwVisible ? 'text' : 'password';
 }
 
 async function handleLogin(e) {
     e.preventDefault();
-
     var btn   = document.getElementById('loginBtn');
     var errEl = document.getElementById('loginError');
-
     btn.disabled = true;
     btn.textContent = 'Signing in...';
     errEl.style.display = 'none';
@@ -226,27 +259,27 @@ async function handleLogin(e) {
     try {
         var resp = await fetch('<?= APP_URL ?>/api/auth.php?action=login', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
+            headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
             body: JSON.stringify({ email: email, password: password })
         });
-
         var data = await resp.json();
-
         if (data.success) {
-            window.location.href = '<?= APP_URL ?>/pages/dashboard.php';
+            // Redirect based on role returned from server
+            var roleRedirects = {
+                admin:   '<?= APP_URL ?>/pages/admin.php',
+                owner:   '<?= APP_URL ?>/pages/manage-properties.php',
+                tenant:  '<?= APP_URL ?>/pages/applications.php',
+                student: '<?= APP_URL ?>/pages/dashboard.php'
+            };
+            window.location.href = roleRedirects[data.user.role] || '<?= APP_URL ?>/pages/dashboard.php';
         } else {
             errEl.textContent = data.message;
             errEl.style.display = 'block';
         }
-
     } catch (err) {
-        errEl.textContent = 'Connection error. Please check your internet and try again.';
+        errEl.textContent = 'Connection error. Please try again.';
         errEl.style.display = 'block';
     }
-
     btn.disabled = false;
     btn.textContent = 'Sign In';
 }

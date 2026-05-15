@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /** UIU Nest — Manage Listings (Owner/Tenant) */
 $pageName = 'Manage Listings';
 require_once __DIR__ . '/../includes/header.php';
@@ -37,13 +37,13 @@ $listings = $stmt->fetchAll();
 ?>
 
 <div class="section-header">
-    <h2>📝 Manage Listings</h2>
+    <h2> Manage Listings</h2>
     <a href="<?= APP_URL ?>/pages/create-listing.php" class="btn btn-primary btn-sm">+ New Listing</a>
 </div>
 
 <?php if (empty($listings)): ?>
 <div class="empty-state">
-    <div class="empty-state-icon">📝</div>
+    <div class="empty-state-icon"></div>
     <h3>No listings yet</h3>
     <p>Create your first listing to get started.</p>
     <a href="<?= APP_URL ?>/pages/create-listing.php" class="btn btn-primary" style="margin-top:16px;">Create Listing</a>
