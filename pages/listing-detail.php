@@ -78,7 +78,13 @@ if (isLoggedIn() && ($listing['created_by'] == $_SESSION['user_id'] || hasAnyRol
 .gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; border-radius: var(--radius); overflow: hidden; margin-bottom: 20px; }
 .gallery-main { grid-column: 1 / 3; grid-row: 1 / 3; height: 260px; }
 .gallery-thumb { height: 124px; }
-.gallery img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.gallery img {
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+    cursor: zoom-in;
+    transition: transform 0.2s;
+}
+.gallery img:hover { transform: scale(1.02); }
 .gallery-placeholder { background: var(--accent-gradient); display: flex; align-items: center; justify-content: center; font-size: 4rem; opacity: 0.25; }
 .star { color: #f59e0b; font-size: 1rem; }
 .review-card { padding: 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 10px; }
@@ -95,19 +101,46 @@ if (isLoggedIn() && ($listing['created_by'] == $_SESSION['user_id'] || hasAnyRol
         <div class="card" style="overflow:hidden;margin-bottom:20px;">
             <!-- Photo gallery -->
             <?php if (count($propertyImages) > 0): ?>
-            <div class="gallery">
-                <div class="gallery-main">
-                    <img src="<?= APP_URL ?>/<?= htmlspecialchars($propertyImages[0]['image_path']) ?>" alt="Property">
+            <?php
+            // Build JS images array for Lightbox
+            $lbImages = array_map(function($img) {
+                return ['src' => APP_URL . '/' . $img['image_path'], 'alt' => 'Property Photo'];
+            }, $propertyImages);
+            $lbJson = json_encode($lbImages);
+            ?>
+            <div class="gallery" id="propertyGallery">
+                <div class="gallery-main cover-photo-wrap">
+                    <img id="coverPhotoImg"
+                         src="<?= APP_URL ?>/<?= htmlspecialchars($propertyImages[0]['image_path']) ?>"
+                         alt="Property"
+                         data-lightbox="gallery"
+                         data-src="<?= APP_URL . '/' . htmlspecialchars($propertyImages[0]['image_path']) ?>"
+                         data-alt="Property Cover"
+                         style="object-position:<?= htmlspecialchars($listing['cover_photo_position'] ?? '50% 50%') ?>">
                 </div>
                 <?php for ($i = 1; $i < min(3, count($propertyImages)); $i++): ?>
                 <div class="gallery-thumb">
-                    <img src="<?= APP_URL ?>/<?= htmlspecialchars($propertyImages[$i]['image_path']) ?>" alt="Photo">
+                    <img src="<?= APP_URL ?>/<?= htmlspecialchars($propertyImages[$i]['image_path']) ?>"
+                         alt="Photo <?= $i + 1 ?>"
+                         data-lightbox="gallery"
+                         data-src="<?= APP_URL . '/' . htmlspecialchars($propertyImages[$i]['image_path']) ?>"
+                         data-alt="Photo <?= $i + 1 ?>">
                 </div>
                 <?php endfor; ?>
                 <?php if (count($propertyImages) < 3): ?>
                 <div class="gallery-thumb gallery-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:48px;height:48px;opacity:.3"><path d="M3 9.5L12 3l9 6.5V21H3V9.5z"/><rect x="9" y="14" width="6" height="7" rx="1"/></svg></div>
                 <?php endif; ?>
             </div>
+            <script>
+            /* Task 3 — Cover photo position adjuster (owners only) */
+            document.addEventListener('DOMContentLoaded', function() {
+                CoverPhoto.init({
+                    imgEl:      document.getElementById('coverPhotoImg'),
+                    propertyId: <?= (int)$listing['property_id'] ?>,
+                    editable:   <?= (isLoggedIn() && ($_SESSION['user_id'] ?? 0) == $listing['created_by'] || hasAnyRole(['owner','admin'])) ? 'true' : 'false' ?>
+                });
+            });
+            </script>
             <?php else: ?>
             <div style="height:240px;background:var(--accent-gradient);display:flex;align-items:center;justify-content:center;opacity:0.2;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" style="width:80px;height:80px;"><path d="M3 9.5L12 3l9 6.5V21H3V9.5z"/><rect x="9" y="14" width="6" height="7" rx="1"/></svg></div>
             <?php endif; ?>

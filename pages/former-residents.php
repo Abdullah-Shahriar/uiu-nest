@@ -9,18 +9,33 @@ requireLogin();
 
 $db = getDB();
 
-// Fetch all move-out records with user + property + room info
+// Fetch all move-out records with user + property + room + owner rating
 $stmt = $db->prepare(
     'SELECT rt.id AS tenure_id,
             rt.moved_in_at, rt.moved_out_at,
             u.id AS user_id, u.full_name, u.email, u.student_id,
             u.department, u.year_of_study, u.gender, u.avatar_path, u.role,
             r.room_number, r.rent_amount,
-            p.id AS property_id, p.name AS property_name, p.address
+            p.id AS property_id, p.name AS property_name, p.address,
+            /* Task 5 — Pull owner\'s rating of this tenant */
+            tr.rating       AS owner_rating,
+            tr.comment      AS owner_comment,
+            tr.cleanliness  AS tr_cleanliness,
+            tr.behaviour    AS tr_behaviour,
+            tr.punctuality  AS tr_punctuality
      FROM room_tenants rt
      JOIN users u      ON u.id  = rt.user_id
      JOIN rooms r      ON r.id  = rt.room_id
      JOIN properties p ON p.id  = r.property_id
+     /* Only fetch the tenant_review written by the property owner for this exact move-out */
+     LEFT JOIN move_out_requests mor ON (
+           mor.room_tenant_id = rt.id
+       AND mor.status         = "completed"
+     )
+     LEFT JOIN tenant_reviews tr ON (
+           tr.move_out_req_id = mor.id
+       AND tr.reviewer_id     = p.owner_id
+     )
      WHERE rt.moved_out_at IS NOT NULL
      ORDER BY rt.moved_out_at DESC'
 );
@@ -29,13 +44,15 @@ $records = $stmt->fetchAll();
 
 // Owners can only see their own property history
 if (hasRole('owner') && !hasRole('admin')) {
-    $records = array_filter($records, function($r) use ($db) {
+    $ownerUserId = $_SESSION['user_id'];
+    $records = array_filter($records, function($r) use ($db, $ownerUserId) {
         $s = $db->prepare('SELECT owner_id FROM properties WHERE id = ?');
         $s->execute([$r['property_id']]);
         $p = $s->fetch();
-        return $p && $p['owner_id'] == $_SESSION['user_id'];
+        return $p && $p['owner_id'] == $ownerUserId;
     });
 }
+
 
 // Group by property
 $byProperty = [];
@@ -130,7 +147,23 @@ function roleLabel(string $role): string {
           $diff    = $inDate->diff($outDate);
           $stayed  = $diff->m + ($diff->y * 12) . ' month' . ($diff->m !== 1 ? 's' : '');
         ?>
-        <div style="color:var(--accent);font-size:0.8rem;">⏱️ Stayed <?= $stayed ?></div>
+        <div style="color:var(--accent);font-size:0.8rem;">
+            Stayed <?= $stayed ?>
+        </div>
+        <?php if (isset($r['owner_rating']) && $r['owner_rating']): ?>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:6px;padding:6px 10px;
+                    background:rgba(245,158,11,0.08);border-radius:6px;border:1px solid rgba(245,158,11,0.2);">
+            <span style="color:#f59e0b;font-size:0.95rem;">
+                <?= str_repeat('★', (int)$r['owner_rating']) . str_repeat('☆', 5 - (int)$r['owner_rating']) ?>
+            </span>
+            <span style="font-size:0.72rem;color:var(--text-tertiary);">Owner rating</span>
+        </div>
+        <?php if ($r['owner_comment']): ?>
+        <div style="font-size:0.75rem;color:var(--text-tertiary);margin-top:4px;font-style:italic;">
+            "<?= htmlspecialchars(substr($r['owner_comment'], 0, 80)) ?>"
+        </div>
+        <?php endif; ?>
+        <?php endif; ?>
       </div>
 
       <div style="margin-top:14px;">
@@ -158,6 +191,7 @@ function roleLabel(string $role): string {
             <th>Moved In</th>
             <th>Moved Out</th>
             <th>Duration</th>
+            <th>Owner Rating</th>
             <th></th>
           </tr>
         </thead>
@@ -184,6 +218,16 @@ function roleLabel(string $role): string {
             <td><?= date('M j, Y', strtotime($r['moved_in_at'])) ?></td>
             <td><?= date('M j, Y', strtotime($r['moved_out_at'])) ?></td>
             <td><?= $stayed ?></td>
+            <td>
+              <?php if (!empty($r['owner_rating'])): ?>
+              <span style="color:#f59e0b;">
+                <?= str_repeat('★', (int)$r['owner_rating']) . str_repeat('☆', 5-(int)$r['owner_rating']) ?>
+              </span>
+              <small style="color:var(--text-tertiary);">(<?= $r['owner_rating'] ?>/5)</small>
+              <?php else: ?>
+              <span style="color:var(--text-tertiary);font-size:0.78rem;">—</span>
+              <?php endif; ?>
+            </td>
             <td>
               <a href="<?= APP_URL ?>/pages/resident-profile.php?user_id=<?= $r['user_id'] ?>" class="btn btn-sm btn-ghost">View</a>
             </td>

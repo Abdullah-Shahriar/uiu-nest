@@ -10,6 +10,18 @@ $userRole    = $_SESSION['role'] ?? 'guest';
 $pageName    = $pageName ?? 'Dashboard';
 $csrfToken   = generateCSRFToken();
 
+$hasActiveTenancy = false;
+if (isLoggedIn()) {
+    try {
+        $db = getDB();
+        $tenantStmt = $db->prepare('SELECT 1 FROM room_tenants WHERE user_id = ? AND moved_out_at IS NULL LIMIT 1');
+        $tenantStmt->execute([$_SESSION['user_id']]);
+        $hasActiveTenancy = (bool)$tenantStmt->fetchColumn();
+    } catch (Exception $e) {
+        $hasActiveTenancy = false;
+    }
+}
+
 $roleLabel = match($userRole) {
     'tenant'  => 'House Manager',
     'owner'   => 'Owner',
@@ -29,6 +41,8 @@ $roleLabel = match($userRole) {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
     <link rel="stylesheet" href="<?= APP_URL ?>/assets/css/style.css">
+    <script src="<?= APP_URL ?>/assets/js/lightbox.js" defer></script>
+    <script src="<?= APP_URL ?>/assets/js/cover-photo.js" defer></script>
     <script>
         (function(){
             var t = localStorage.getItem('uiu-theme') || 'dark';
@@ -111,6 +125,19 @@ $roleLabel = match($userRole) {
                 </span>
                 <span class="nav-label">Favourite Properties</span>
             </a>
+
+            <?php if ($hasActiveTenancy): ?>
+            <a href="<?= APP_URL ?>/pages/my-home.php"
+               class="nav-item <?= $pageName === 'My Home' ? 'active' : '' ?>" id="nav-my-home">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 9.5L12 3l9 6.5V21H3V9.5z"/>
+                        <rect x="9" y="14" width="6" height="7" rx="1"/>
+                    </svg>
+                </span>
+                <span class="nav-label">My Home</span>
+            </a>
+            <?php endif; ?>
 
             <!-- ── Student ── -->
             <?php if (hasAnyRole(['student'])): ?>
@@ -232,6 +259,8 @@ $roleLabel = match($userRole) {
         </nav>
 
 
+
+
         <!-- User card -->
         <?php if (isLoggedIn()): ?>
         <div class="sidebar-footer">
@@ -323,6 +352,46 @@ $roleLabel = match($userRole) {
             <p style="font-size:0.82rem;color:var(--text-tertiary);margin-bottom:16px;" data-i18n="complaint_note">
                 Your complaint goes directly to the Admin. Check "Submit Anonymously" to hide your identity.
             </p>
+            <!-- Task 4: Targeted property dropdown -->
+            <div class="form-group">
+                <label class="form-label">Related Property (Optional)</label>
+                <select class="form-control" id="complaintProperty">
+                    <option value="">— General / No specific property —</option>
+                    <?php
+                    /* Fetch properties related to this user:
+                       - As a tenant: the property they live/lived in
+                       - As a student: published properties they've applied to
+                    */
+                    $cpDb = getDB();
+                    $cpStmt = $cpDb->prepare(
+                        'SELECT DISTINCT p.id, p.name, u_owner.full_name AS owner_name
+                           FROM properties p
+                           JOIN users u_owner ON u_owner.id = p.owner_id
+                          WHERE p.id IN (
+                              SELECT r.property_id
+                                FROM room_tenants rt
+                                JOIN rooms r ON r.id = rt.room_id
+                               WHERE rt.user_id = ?
+                              UNION
+                              SELECT r.property_id
+                                FROM applications a
+                                JOIN listings l ON l.id = a.listing_id
+                                JOIN rooms r    ON r.id = l.room_id
+                               WHERE a.applicant_id = ? AND a.deleted_at IS NULL
+                          )
+                          AND p.is_active = 1
+                          ORDER BY p.name'
+                    );
+                    $cpStmt->execute([$_SESSION['user_id'], $_SESSION['user_id']]);
+                    $cpProps = $cpStmt->fetchAll();
+                    foreach ($cpProps as $cp):
+                    ?>
+                    <option value="<?= $cp['id'] ?>">
+                        <?= htmlspecialchars($cp['name']) ?> (Owner: <?= htmlspecialchars($cp['owner_name']) ?>)
+                    </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
             <div class="form-group">
                 <label class="form-label" data-i18n="complaint_category">Category</label>
                 <select class="form-control" id="complaintCategory">
@@ -358,9 +427,11 @@ $roleLabel = match($userRole) {
 </div>
 <script>
 async function submitComplaint() {
-    var subj = document.getElementById('complaintSubject').value.trim();
-    var desc = document.getElementById('complaintDesc').value.trim();
-    var anon = document.getElementById('complaintAnon').checked;
+    var subj     = document.getElementById('complaintSubject').value.trim();
+    var desc     = document.getElementById('complaintDesc').value.trim();
+    var anon     = document.getElementById('complaintAnon').checked;
+    var propSel  = document.getElementById('complaintProperty');
+    var propId   = propSel && propSel.value ? parseInt(propSel.value) : null;
     if (!subj || !desc) { Toast.show('Please fill all fields.', 'error'); return; }
     var btn = document.getElementById('complaintSubmitBtn');
     btn.disabled = true;
@@ -368,10 +439,11 @@ async function submitComplaint() {
         var r = await fetchAPI(window.APP_URL + '/api/complaints.php', {
             method: 'POST',
             body: JSON.stringify({
-                category: document.getElementById('complaintCategory').value,
-                subject: subj,
+                category:    document.getElementById('complaintCategory').value,
+                subject:     subj,
                 description: desc,
-                is_anonymous: anon
+                is_anonymous: anon,
+                property_id:  propId
             })
         });
         if (r.success) {
@@ -379,8 +451,9 @@ async function submitComplaint() {
             Modal.close('complaintModal');
             document.getElementById('complaintSubject').value = '';
             document.getElementById('complaintDesc').value = '';
+            if (propSel) propSel.value = '';
         }
-    } catch(e) {}
+    } catch(e) { Toast.show('Submission failed. Please try again.', 'error'); }
     btn.disabled = false;
 }
 </script>

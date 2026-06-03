@@ -97,6 +97,23 @@ if ($method === 'PUT') {
         jsonResponse(['success' => true]);
     }
 
+    /* Task 3 — Save cover photo position (drag-to-reposition) */
+    if (isset($input['cover_photo_position'])) {
+        $propId   = (int)($input['id'] ?? 0);
+        $ownerId  = (int)$_SESSION['user_id'];
+        $position = preg_replace('/[^0-9.% ]/', '', $input['cover_photo_position']);
+        if (!$propId || !$position) jsonResponse(['error' => 'Invalid data.'], 400);
+
+        $stmt = $db->prepare(
+            'UPDATE properties SET cover_photo_position = ? WHERE id = ? AND owner_id = ?'
+        );
+        $stmt->execute([$position, $propId, $ownerId]);
+        if ($stmt->rowCount() === 0) {
+            jsonResponse(['error' => 'Not your property or not found.'], 403);
+        }
+        jsonResponse(['success' => true]);
+    }
+
     if ($type === 'room') {
         $stmt = $db->prepare(
             'UPDATE rooms r JOIN properties p ON p.id = r.property_id

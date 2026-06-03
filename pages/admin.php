@@ -21,7 +21,24 @@ $allProps = $db->query('SELECT p.*, u.full_name AS owner_name FROM properties p 
 $amenities = $db->query('SELECT * FROM amenities ORDER BY sort_order')->fetchAll();
 
 $ownerApps   = $db->query('SELECT * FROM owner_applications ORDER BY created_at DESC')->fetchAll();
-$complaints  = $db->query("SELECT c.*, p.name AS property_name FROM complaints c LEFT JOIN properties p ON p.id = c.property_id ORDER BY c.created_at DESC")->fetchAll();
+/*
+ * Task 4 — Admin Privacy Override:
+ * Admin ALWAYS sees the real submitter identity, regardless of is_anonymous flag.
+ * The CASE logic is only applied on the public-facing GET endpoint in complaints.php.
+ * Here we do a straight JOIN to always reveal the submitter.
+ */
+$complaints = $db->query(
+    "SELECT c.*,
+            p.name AS property_name,
+            u.full_name  AS submitter_name,
+            u.email      AS submitter_email,
+            u.avatar_path AS submitter_avatar
+       FROM complaints c
+       LEFT JOIN properties p ON p.id = c.property_id
+       LEFT JOIN users u      ON u.id = c.submitter_id
+      ORDER BY c.created_at DESC"
+)->fetchAll();
+
 ?>
 
 <div class="stats-grid">
@@ -30,6 +47,13 @@ $complaints  = $db->query("SELECT c.*, p.name AS property_name FROM complaints c
     <div class="stat-card"><div class="stat-value"><?= $stats['owners'] ?></div><div class="stat-label">Owners</div></div>
     <div class="stat-card"><div class="stat-value"><?= $stats['listings'] ?></div><div class="stat-label">Listings</div></div>
 </div>
+
+<?php
+/* Task 5 — Owner: Show pending move-out requests at top of admin dashboard */
+if (hasRole('owner')) {
+    require_once __DIR__ . '/../includes/owner_moveout_widget.php';
+}
+?>
 
 <style>
 .tabs { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:20px; background:var(--bg-secondary); border:1px solid var(--border); border-radius:var(--radius-lg); padding:8px; }
