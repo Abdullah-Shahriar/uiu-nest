@@ -51,7 +51,7 @@
 
         var params = getFilterParams();
         try {
-            var data = await fetchAPI(APP_URL + '/api/listings.php?' + params);
+            var data = await fetchAPI(window.APP_URL + '/api/listings.php?' + params);
             currentListings = data.listings || [];
             renderListings(currentListings);
             if (typeof window.updateMapMarkers === 'function') {
@@ -102,14 +102,14 @@
             // Cover photo from property_images
             var imageSection = '';
             if (l.cover_photo) {
-                imageSection = '<img src="' + APP_URL + '/' + escapeHtml(l.cover_photo) + '" alt="' + escapeHtml(l.title) + '" loading="lazy">';
+                imageSection = '<img src="' + window.APP_URL + '/' + escapeHtml(l.cover_photo) + '" alt="' + escapeHtml(l.title) + '" loading="lazy">';
             } else if (l.image_path) {
-                imageSection = '<img src="' + APP_URL + '/' + escapeHtml(l.image_path) + '" alt="' + escapeHtml(l.title) + '" loading="lazy">';
+                imageSection = '<img src="' + window.APP_URL + '/' + escapeHtml(l.image_path) + '" alt="' + escapeHtml(l.title) + '" loading="lazy">';
             } else {
                 imageSection = '<div class="listing-card-placeholder">' + SVG.home + '</div>';
             }
 
-            var avatarImg = l.creator_avatar ? '<img src="' + APP_URL + '/' + escapeHtml(l.creator_avatar) + '" style="width:20px;height:20px;border-radius:50%;object-fit:cover;margin-right:6px;vertical-align:middle;">' : '<div style="width:20px;height:20px;border-radius:50%;background:var(--border);color:var(--text-secondary);display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;margin-right:6px;vertical-align:middle;">' + (l.created_by_name || 'U').charAt(0).toUpperCase() + '</div>';
+            var avatarImg = l.creator_avatar ? '<img src="' + window.APP_URL + '/' + escapeHtml(l.creator_avatar) + '" style="width:20px;height:20px;border-radius:50%;object-fit:cover;margin-right:6px;vertical-align:middle;">' : '<div style="width:20px;height:20px;border-radius:50%;background:var(--border);color:var(--text-secondary);display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;margin-right:6px;vertical-align:middle;">' + (l.created_by_name || 'U').charAt(0).toUpperCase() + '</div>';
 
             html += '<div class="card listing-card" data-id="' + l.id + '">'
                 + '<div class="listing-card-image">'
@@ -118,7 +118,7 @@
                 + heartBtn
                 + '</div>'
                 + '<div class="listing-card-content">'
-                + '<a href="' + APP_URL + '/pages/listing-detail.php?id=' + l.id + '" class="listing-card-title">' + escapeHtml(l.title) + '</a>'
+                + '<a href="' + window.APP_URL + '/pages/listing-detail.php?id=' + l.id + '" class="listing-card-title">' + escapeHtml(l.title) + '</a>'
                 + '<div class="listing-card-meta">'
                 + '<span>' + SVG.building + ' ' + escapeHtml(l.property_name) + '</span>'
                 + '<span>' + SVG.bed + ' ' + beds + '</span>'
@@ -128,7 +128,7 @@
                 + '</div>'
                 + '<div class="listing-card-footer" style="display:flex;align-items:center;justify-content:space-between;">'
                 + '<div style="display:flex;align-items:center;">' + avatarImg + '<small style="font-weight:500;">' + escapeHtml(l.created_by_name || '') + '</small></div>'
-                + '<a href="' + APP_URL + '/pages/listing-detail.php?id=' + l.id + '" class="btn btn-sm btn-outline">View &rarr;</a>'
+                + '<a href="' + window.APP_URL + '/pages/listing-detail.php?id=' + l.id + '" class="btn btn-sm btn-outline">View &rarr;</a>'
                 + '</div>'
                 + '</div>';
         }
@@ -215,7 +215,7 @@
         var btn = event.currentTarget;
         var wasSaved = btn.classList.contains('saved');
         try {
-            await fetchAPI(APP_URL + '/api/saved.php', {
+            await fetchAPI(window.APP_URL + '/api/saved.php', {
                 method: 'POST',
                 body: JSON.stringify({ listing_id: listingId })
             });

@@ -130,6 +130,15 @@
             document.documentElement.setAttribute('data-lang', lang);
             this._syncButtons(lang);
             this.apply(lang);
+
+            // Sync with Google Translate
+            const gtValue = lang === 'bn' ? '/en/bn' : '/en/en';
+            const gtCookieMatch = document.cookie.match(/(^|;) ?googtrans=([^;]*)(;|$)/);
+            if (!gtCookieMatch || gtCookieMatch[2] !== gtValue) {
+                document.cookie = `googtrans=${gtValue}; path=/`;
+                document.cookie = `googtrans=${gtValue}; path=/; domain=${location.hostname}`;
+                window.location.reload();
+            }
         },
         _syncButtons(lang) {
             // Sidebar pills

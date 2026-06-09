@@ -41,7 +41,267 @@ $roleLabel = match($userRole) {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
     <link rel="stylesheet" href="<?= APP_URL ?>/assets/css/style.css">
+    <script>
+        window.APP_URL = "<?= APP_URL ?>";
+    </script>
     <script src="<?= APP_URL ?>/assets/js/lightbox.js" defer></script>
+
+    <style>
+    /* ══════════════════════════════════════════════
+       Google Translate Custom CSS
+       ══════════════════════════════════════════════ */
+    #google_translate_element {
+        display: none !important;
+    }
+    .goog-te-gadget {
+        font-family: 'Inter', sans-serif !important;
+        color: transparent !important; /* hide 'powered by' text */
+    }
+    .goog-te-gadget .goog-te-combo {
+        background: var(--bg-secondary) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: var(--radius-sm) !important;
+        color: var(--text-primary) !important;
+        padding: 4px 8px !important;
+        font-size: 0.8rem !important;
+        cursor: pointer !important;
+        outline: none !important;
+        transition: border-color 0.2s !important;
+    }
+    .goog-te-gadget .goog-te-combo:hover {
+        border-color: var(--accent) !important;
+    }
+    /* Hide Google Top Frame Banner */
+    .goog-te-banner-frame,
+    .goog-te-banner-frame.skiptranslate,
+    iframe.goog-te-banner-frame {
+        display: none !important;
+        visibility: hidden !important;
+    }
+    .skiptranslate > iframe {
+        display: none !important;
+    }
+    body {
+        top: 0px !important; 
+    }
+    /* Hide Google tooltip */
+    #goog-gt-tt, .goog-tooltip, .goog-tooltip:hover {
+        display: none !important;
+    }
+    .goog-text-highlight {
+        background-color: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    /* ══════════════════════════════════════════════
+       Theme & Utility Classes
+       ══════════════════════════════════════════════ */
+    /* ══════════════════════════════════════════════
+       Feature 4: Notification Bell — Topbar
+       ══════════════════════════════════════════════ */
+    .notif-bell-wrap {
+        position: relative;
+    }
+    .notif-bell-btn {
+        position: relative;
+        width: 38px;
+        height: 38px;
+        border-radius: var(--radius-sm);
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-strong);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-secondary);
+        transition: all var(--transition);
+    }
+    .notif-bell-btn:hover {
+        background: var(--accent-light);
+        border-color: var(--accent);
+        color: var(--accent);
+        transform: translateY(-1px);
+    }
+    .notif-bell-btn svg {
+        width: 17px;
+        height: 17px;
+        transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .notif-bell-btn.ringing svg {
+        animation: bellRing 0.5s ease;
+    }
+    @keyframes bellRing {
+        0%,100% { transform: rotate(0deg); }
+        20%      { transform: rotate(-15deg); }
+        40%      { transform: rotate(15deg); }
+        60%      { transform: rotate(-10deg); }
+        80%      { transform: rotate(10deg); }
+    }
+    .notif-badge {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        min-width: 16px;
+        height: 16px;
+        padding: 0 4px;
+        background: var(--danger);
+        color: #fff;
+        font-size: 0.62rem;
+        font-weight: 700;
+        border-radius: var(--radius-full);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--bg-primary);
+        line-height: 1;
+        opacity: 0;
+        transform: scale(0.5);
+        transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+        pointer-events: none;
+    }
+    .notif-badge.visible {
+        opacity: 1;
+        transform: scale(1);
+    }
+    /* Dropdown panel */
+    .notif-dropdown {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        width: 320px;
+        background: var(--bg-glass-strong);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-xl);
+        z-index: 500;
+        overflow: hidden;
+        /* slide-down animation */
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px) scale(0.97);
+        transform-origin: top right;
+        transition:
+            opacity 0.22s cubic-bezier(0.4,0,0.2,1),
+            transform 0.22s cubic-bezier(0.4,0,0.2,1),
+            visibility 0.22s;
+    }
+    [data-theme="dark"] .notif-dropdown {
+        border-color: rgba(56,189,248,0.14);
+        box-shadow: 0 0 0 1px rgba(56,189,248,0.08), var(--shadow-xl);
+    }
+    .notif-dropdown.open {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0) scale(1);
+    }
+    .notif-dropdown-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 18px;
+        border-bottom: 1px solid var(--border);
+    }
+    .notif-dropdown-header h4 {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 7px;
+    }
+    .notif-dropdown-header h4 svg {
+        width: 15px;
+        height: 15px;
+        color: var(--accent);
+    }
+    .notif-mark-read {
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--accent);
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 3px 6px;
+        border-radius: var(--radius-xs);
+        transition: background var(--transition);
+    }
+    .notif-mark-read:hover {
+        background: var(--accent-light);
+    }
+    .notif-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 36px 24px 30px;
+        gap: 12px;
+        text-align: center;
+    }
+    .notif-empty-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: var(--radius-full);
+        background: var(--accent-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .notif-empty-icon svg {
+        width: 30px;
+        height: 30px;
+        color: var(--accent);
+    }
+    .notif-empty-title {
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+    .notif-empty-sub {
+        font-size: 0.78rem;
+        color: var(--text-tertiary);
+        line-height: 1.5;
+        max-width: 220px;
+    }
+    .notif-list {
+        max-height: 340px;
+        overflow-y: auto;
+    }
+    .notif-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 12px 18px;
+        border-bottom: 1px solid var(--border);
+        transition: background var(--transition);
+        cursor: pointer;
+    }
+    .notif-item:last-child { border-bottom: none; }
+    .notif-item:hover { background: var(--accent-light); }
+    .notif-item.unread { background: var(--accent-light); }
+    .notif-item-icon {
+        width: 32px; height: 32px;
+        border-radius: var(--radius-sm);
+        background: var(--bg-tertiary);
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+        color: var(--accent);
+    }
+    .notif-item-icon svg { width: 15px; height: 15px; }
+    .notif-item-body { flex: 1; min-width: 0; }
+    .notif-item-text { font-size: 0.82rem; color: var(--text-primary); line-height: 1.45; }
+    .notif-item-time { font-size: 0.72rem; color: var(--text-tertiary); margin-top: 2px; }
+    .notif-unread-dot {
+        width: 7px; height: 7px;
+        border-radius: 50%;
+        background: var(--accent);
+        flex-shrink: 0;
+        margin-top: 5px;
+    }
+    </style>
     <script src="<?= APP_URL ?>/assets/js/cover-photo.js" defer></script>
     <script>
         (function(){
@@ -108,13 +368,13 @@ $roleLabel = match($userRole) {
             </a>
 
             <?php if (!hasRole('admin')): ?>
-            <!-- Complaint Box (non-admin logged-in users only) -->
-            <a href="#" onclick="Modal.open('complaintModal');return false;"
-               class="nav-item" id="nav-complaint">
+            <!-- Complaints Page -->
+            <a href="<?= APP_URL ?>/pages/complaints.php"
+               class="nav-item <?= $pageName === 'Complaints' ? 'active' : '' ?>" id="nav-complaints">
                 <span class="nav-icon">
                     <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
                 </span>
-                <span class="nav-label" data-i18n="nav_complaint">Submit Complaint</span>
+                <span class="nav-label" data-i18n="nav_complaints">Complaints</span>
             </a>
             <?php endif; ?>
 
@@ -267,7 +527,7 @@ $roleLabel = match($userRole) {
             <a href="<?= APP_URL ?>/pages/profile.php" style="text-decoration:none;flex:1;min-width:0;" class="user-card user-card-link">
                 <?php if (!empty($currentUser['avatar_path']) && file_exists(APP_ROOT . '/' . $currentUser['avatar_path'])): ?>
                     <img src="<?= APP_URL . '/' . htmlspecialchars($currentUser['avatar_path']) ?>"
-                         style="width:36px;height:36px;border-radius:10px;object-fit:cover;flex-shrink:0;" alt="Avatar">
+                         style="width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0;" alt="Avatar">
                 <?php else: ?>
                     <div class="user-avatar"><?= strtoupper(substr($currentUser['full_name'] ?? 'U', 0, 1)) ?></div>
                 <?php endif; ?>
@@ -300,15 +560,58 @@ $roleLabel = match($userRole) {
                 <button class="lang-toggle-switch" id="langTopbarBtn" onclick="UIULang.toggle()" title="Switch Language">
                     <span class="lang-icon">🌍</span>
                 </button>
+                <!-- Hidden Google Translate Widget -->
+                <div id="google_translate_element"></div>
                 <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
                     <span class="theme-icon sun">☀️</span>
                     <span class="theme-icon moon">🌙</span>
                 </button>
                 <?php if (isLoggedIn()): ?>
+                    <!-- Feature 4: Notification Bell -->
+                    <?php $notifCount = 0; /* future: fetch from DB */ ?>
+                    <div class="notif-bell-wrap" id="notifBellWrap">
+                        <button class="notif-bell-btn" id="notifBellBtn" onclick="toggleNotifDropdown()" aria-label="Notifications" title="Notifications">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/>
+                                <path d="M13.73 21a2 2 0 01-3.46 0"/>
+                            </svg>
+                            <span class="notif-badge <?= $notifCount > 0 ? 'visible' : '' ?>" id="notifBadge"><?= $notifCount > 0 ? $notifCount : '' ?></span>
+                        </button>
+                        <!-- Notification Dropdown -->
+                        <div class="notif-dropdown" id="notifDropdown" role="dialog" aria-label="Notifications panel">
+                            <div class="notif-dropdown-header">
+                                <h4>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/>
+                                        <path d="M13.73 21a2 2 0 01-3.46 0"/>
+                                    </svg>
+                                    Notifications
+                                </h4>
+                                <button class="notif-mark-read" onclick="markAllRead()" title="Mark all as read">Mark all read</button>
+                            </div>
+                            <?php if ($notifCount === 0): ?>
+                            <div class="notif-empty">
+                                <div class="notif-empty-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/>
+                                        <path d="M13.73 21a2 2 0 01-3.46 0"/>
+                                        <line x1="2" y1="2" x2="22" y2="22" stroke="var(--accent)" stroke-width="1.5"/>
+                                    </svg>
+                                </div>
+                                <div class="notif-empty-title">You're all caught up!</div>
+                                <div class="notif-empty-sub">No new notifications right now. Check back later.</div>
+                            </div>
+                            <?php else: ?>
+                            <div class="notif-list" id="notifList">
+                                <!-- Dynamic notifications would render here -->
+                            </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
                     <a href="<?= APP_URL ?>/pages/profile.php" class="topbar-user-avatar" title="My Profile">
                         <?php if (!empty($currentUser['avatar_path']) && file_exists(APP_ROOT . '/' . $currentUser['avatar_path'])): ?>
                             <img src="<?= APP_URL . '/' . htmlspecialchars($currentUser['avatar_path']) ?>"
-                                 style="width:34px;height:34px;border-radius:9px;object-fit:cover;" alt="Avatar">
+                                 style="width:34px;height:34px;border-radius:50%;object-fit:cover;" alt="Avatar">
                         <?php else: ?>
                             <div class="user-avatar-sm"><?= strtoupper(substr($currentUser['full_name'] ?? 'U', 0, 1)) ?></div>
                         <?php endif; ?>
@@ -334,6 +637,16 @@ $roleLabel = match($userRole) {
                 window.UIU_LNG  = <?= UIU_LNG ?>;
                 window.APP_URL  = '<?= APP_URL ?>';
             </script>
+            <script type="text/javascript">
+                function googleTranslateElementInit() {
+                  new google.translate.TranslateElement({
+                      pageLanguage: 'en',
+                      includedLanguages: 'en,bn', // Only English and Bangla
+                      layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+                  }, 'google_translate_element');
+                }
+            </script>
+            <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 <?php /* ── Complaint Modal (non-admin logged-in users only) ── */ ?>
 <?php if (isLoggedIn() && !hasRole('admin')): ?>
@@ -425,6 +738,62 @@ $roleLabel = match($userRole) {
         </div>
     </div>
 </div>
+<?php endif; // end complaint modal ?>
+
+<!-- Notification bell JS (all logged-in users) -->
+<?php if (isLoggedIn()): ?>
+<script>
+/* ══════════════════════════════════════════════════════
+   Feature 4: Notification Bell JS
+   ══════════════════════════════════════════════════════ */
+(function() {
+    let _open = false;
+
+    window.toggleNotifDropdown = function() {
+        const dropdown = document.getElementById('notifDropdown');
+        const btn      = document.getElementById('notifBellBtn');
+        if (!dropdown) return;
+        _open = !_open;
+        if (_open) {
+            dropdown.classList.add('open');
+            btn.classList.add('ringing');
+            setTimeout(() => btn.classList.remove('ringing'), 500);
+        } else {
+            dropdown.classList.remove('open');
+        }
+    };
+
+    window.markAllRead = function() {
+        const badge = document.getElementById('notifBadge');
+        if (badge) {
+            badge.classList.remove('visible');
+            badge.textContent = '';
+        }
+        // future: POST to mark-read API
+    };
+
+    // Close on outside click or Escape
+    document.addEventListener('click', function(e) {
+        const wrap = document.getElementById('notifBellWrap');
+        if (wrap && !wrap.contains(e.target) && _open) {
+            const dd = document.getElementById('notifDropdown');
+            if (dd) dd.classList.remove('open');
+            _open = false;
+        }
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && _open) {
+            const dd = document.getElementById('notifDropdown');
+            if (dd) dd.classList.remove('open');
+            _open = false;
+        }
+    });
+})();
+</script>
+<?php endif; ?>
+
+<?php if (isLoggedIn() && !hasRole('admin')): ?>
 <script>
 async function submitComplaint() {
     var subj     = document.getElementById('complaintSubject').value.trim();

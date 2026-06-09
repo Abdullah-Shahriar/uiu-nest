@@ -10,7 +10,8 @@
 <?php if (isLoggedIn() && hasAnyRole(['owner','tenant','student'])): ?>
 
 <!-- Right Sidebar for Calendar -->
-<button id="rightSidebarToggle" class="right-sidebar-toggle" onclick="document.getElementById('rightSidebarPanel').classList.toggle('open')">
+<div id="calendarBlurOverlay" onclick="toggleCalendarSidebar()"></div>
+<button id="rightSidebarToggle" class="right-sidebar-toggle" onclick="toggleCalendarSidebar()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
 </button>
 <div id="rightSidebarPanel" class="right-sidebar-panel">
@@ -85,6 +86,22 @@
 <?php endif; ?>
 
 <style>
+#calendarBlurOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(4, 9, 16, 0.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 899; /* Just below rightSidebarPanel (900) */
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+#calendarBlurOverlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
 .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
 .cal-header-cell { text-align: center; font-size: 0.68rem; font-weight: 700; color: var(--text-tertiary); padding: 6px 0; text-transform: uppercase; letter-spacing: 0.06em; }
 .cal-day { min-height: 72px; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 6px 7px; font-size: 0.76rem; background: var(--bg-secondary); transition: background var(--transition); }
@@ -96,6 +113,13 @@
 .cal-event-dot.maintenance { color: var(--warning); background: var(--warning-light); }
 </style>
 <script>
+function toggleCalendarSidebar() {
+    const panel = document.getElementById('rightSidebarPanel');
+    const overlay = document.getElementById('calendarBlurOverlay');
+    if (panel) panel.classList.toggle('open');
+    if (overlay) overlay.classList.toggle('active');
+}
+
 const CalWidget = {
     current: new Date(),
     events: [],
