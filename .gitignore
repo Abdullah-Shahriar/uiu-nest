@@ -24,3 +24,8 @@ Thumbs.db
 fix_passwords.php
 test_auth.php
 test_auth.zip
+
+# Old migration files — fully merged into sql/schema.sql
+sql/migrations.sql
+sql/v2_migrations.sql
+sql/v3_migrations.sql
