@@ -17,10 +17,8 @@ $db     = getDB();
 
 /* ─── POST: Submit complaint (any non-admin logged-in user) ─── */
 if ($method === 'POST') {
-    requireLogin();
-
     // Admins cannot submit complaints
-    if (hasRole('admin')) {
+    if (isLoggedIn() && hasRole('admin')) {
         jsonResponse(['error' => 'Admins do not submit complaints.'], 403);
     }
 
@@ -42,8 +40,8 @@ if ($method === 'POST') {
         jsonResponse(['error' => 'Subject too long.'], 400);
     }
 
-    // Store submitter_id only if NOT anonymous
-    $submitterId = $isAnonymous ? null : (int)$_SESSION['user_id'];
+    // Store submitter_id only if NOT anonymous AND logged in
+    $submitterId = ($isAnonymous || !isLoggedIn()) ? null : (int)$_SESSION['user_id'];
 
     $stmt = $db->prepare(
         'INSERT INTO complaints (category, property_id, subject, description, submitter_id, is_anonymous, status, created_at)
@@ -56,9 +54,7 @@ if ($method === 'POST') {
 
 /* ─── GET: Read complaints ─── */
 if ($method === 'GET') {
-    requireLogin();
-
-    $isAdmin = hasRole('admin');
+    $isAdmin = isLoggedIn() && hasRole('admin');
     $status = $_GET['status'] ?? '';
 
     $status = $_GET['status'] ?? '';

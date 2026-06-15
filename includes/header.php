@@ -339,7 +339,7 @@ $roleLabel = match($userRole) {
         </div>
 
         <!-- Live Clock -->
-        <div class="sidebar-clock">
+        <div class="sidebar-clock notranslate" translate="no">
             <div class="clock-time" id="clockTime">--:--:--</div>
             <div class="clock-date" id="clockDate">Loading...</div>
         </div>
@@ -440,13 +440,7 @@ $roleLabel = match($userRole) {
                     <span class="nav-label" data-i18n="nav_former">Former Residents</span>
                 </a>
 
-                <a href="<?= APP_URL ?>/pages/public-comments.php"
-                   class="nav-item <?= $pageName === 'Public Comments' ? 'active' : '' ?>" id="nav-comments-hm">
-                    <span class="nav-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-                    </span>
-                    <span class="nav-label">Public Comment Section</span>
-                </a>
+
             <?php endif; ?>
 
             <!-- ── Owner ── -->
@@ -485,13 +479,7 @@ $roleLabel = match($userRole) {
                     <span class="nav-label" data-i18n="nav_former">Former Residents</span>
                 </a>
 
-                <a href="<?= APP_URL ?>/pages/public-comments.php"
-                   class="nav-item <?= $pageName === 'Public Comments' ? 'active' : '' ?>" id="nav-comments">
-                    <span class="nav-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-                    </span>
-                    <span class="nav-label">Public Comment Section</span>
-                </a>
+
             <?php endif; ?>
 
             <!-- ── Admin ── -->

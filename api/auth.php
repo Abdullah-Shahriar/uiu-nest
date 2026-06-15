@@ -22,9 +22,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     jsonResponse(['error' => 'Method not allowed'], 405);
 }
 
-$input = json_decode(file_get_contents('php://input'), true);
-if (!$input) {
-    $input = $_POST;
+$rawBody = file_get_contents('php://input');
+$input = $rawBody ? (json_decode($rawBody, true) ?? $_POST) : $_POST;
+if ($rawBody && json_last_error() !== JSON_ERROR_NONE) {
+    jsonResponse(['error' => 'Invalid JSON body'], 400);
 }
 
 if ($action === 'login') {
@@ -52,6 +53,7 @@ if ($action === 'login') {
     $_SESSION['role']     = $user['role'];
     $_SESSION['full_name'] = $user['full_name'];
     session_regenerate_id(true);
+    session_write_close(); // Force write before exit to prevent silent failure on shared hosting
 
     jsonResponse(['success' => true, 'user' => [
         'id'        => $user['id'],
@@ -80,8 +82,9 @@ if ($action === 'register') {
     }
 
     $domain      = substr(strrchr($email, '@'), 1);
-    $domainCheck = $db->prepare('SELECT id FROM allowed_domains WHERE ? LIKE CONCAT("%", domain)');
-    $domainCheck->execute([$domain]);
+    $domainCheck = $db->prepare('SELECT id FROM allowed_domains WHERE ? = domain OR ? LIKE CONCAT("%.", domain)');
+    $domainCheck->execute([$domain, $domain]);
+
 
     if (!$domainCheck->fetch()) {
         jsonResponse(['success' => false, 'message' => 'Please use your university email (e.g. @uiu.ac.bd or @bscse.uiu.ac.bd).'], 400);
@@ -111,6 +114,7 @@ if ($action === 'register') {
     $_SESSION['role']      = 'student';
     $_SESSION['full_name'] = $name;
     session_regenerate_id(true);
+    session_write_close(); // Force write before exit to prevent silent failure on shared hosting
 
     jsonResponse(['success' => true, 'user' => ['id' => $newId, 'full_name' => $name, 'role' => 'student']]);
 }

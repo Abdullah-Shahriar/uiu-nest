@@ -107,8 +107,8 @@ function isEmailDomainAllowed(string $email): bool {
         return false;
     }
     $db = getDB();
-    $stmt = $db->prepare('SELECT id FROM allowed_domains WHERE ? LIKE CONCAT("%", domain)');
-    $stmt->execute([$domain]);
+    $stmt = $db->prepare('SELECT id FROM allowed_domains WHERE ? = domain OR ? LIKE CONCAT("%.", domain)');
+    $stmt->execute([$domain, $domain]);
     $result = $stmt->fetch();
     if ($result) {
         return true;

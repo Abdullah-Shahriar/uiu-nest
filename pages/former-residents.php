@@ -3,9 +3,10 @@
  * UIU Nest — Former Residents (History Page)
  * Shows past tenants with property/room info and a link to their profile.
  */
+require_once __DIR__ . '/../includes/auth.php';
+requireLogin();
 $pageName = 'Former Residents';
 require_once __DIR__ . '/../includes/header.php';
-requireLogin();
 
 $db = getDB();
 

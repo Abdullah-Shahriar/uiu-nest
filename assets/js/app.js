@@ -31,10 +31,12 @@
 
     // ─── Live Clock ───────────────────────────────────────
     const Clock = {
+        _timer: null,
         init() {
             const timeEl = document.getElementById('clockTime');
             const dateEl = document.getElementById('clockDate');
             if (!timeEl || !dateEl) return;
+            if (this._timer) return; // prevent double-init
             const tick = () => {
                 const now = new Date();
                 timeEl.textContent = now.toLocaleTimeString('en-GB', { hour12: false });
@@ -43,7 +45,7 @@
                 });
             };
             tick();
-            setInterval(tick, 1000);
+            this._timer = setInterval(tick, 1000);
         }
     };
 
@@ -131,13 +133,23 @@
             this._syncButtons(lang);
             this.apply(lang);
 
-            // Sync with Google Translate
-            const gtValue = lang === 'bn' ? '/en/bn' : '/en/en';
-            const gtCookieMatch = document.cookie.match(/(^|;) ?googtrans=([^;]*)(;|$)/);
-            if (!gtCookieMatch || gtCookieMatch[2] !== gtValue) {
-                document.cookie = `googtrans=${gtValue}; path=/`;
-                document.cookie = `googtrans=${gtValue}; path=/; domain=${location.hostname}`;
-                window.location.reload();
+            // Drive Google Translate without a page reload.
+            const gtCombo = document.querySelector('.goog-te-combo');
+            if (gtCombo) {
+                const targetLang = lang === 'bn' ? 'bn' : 'en';
+                if (gtCombo.value !== targetLang) {
+                    gtCombo.value = targetLang;
+                    gtCombo.dispatchEvent(new Event('change'));
+                }
+            } else {
+                // Fallback: set cookie and reload only once if widget not ready
+                const gtCookieVal  = lang === 'bn' ? '/en/bn' : '/en/en';
+                const currentCookie = document.cookie.match(/(^|;)\s*googtrans=([^;]*)/);
+                if (!currentCookie || currentCookie[2] !== gtCookieVal) {
+                    document.cookie = `googtrans=${gtCookieVal}; path=/`;
+                    document.cookie = `googtrans=${gtCookieVal}; path=/; domain=${location.hostname}`;
+                    window.location.reload();
+                }
             }
         },
         _syncButtons(lang) {
@@ -158,6 +170,7 @@
             });
         }
     };
+
 
     // ─── Sidebar ──────────────────────────────────────────
     const Sidebar = {

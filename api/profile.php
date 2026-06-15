@@ -26,7 +26,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_GET['action'] ?? '') === 'avatar
     }
 
     $dir      = UPLOAD_DIR . '/avatars';
-    if (!is_dir($dir)) { mkdir($dir, 0755, true); }
+    if (!is_dir($dir)) {
+        if (!mkdir($dir, 0755, true)) {
+            error_log('Cannot create avatar directory: ' . $dir);
+            jsonResponse(['error' => 'Server configuration error: upload directory unavailable.'], 500);
+        }
+    }
     $filename = 'avatar_' . $uid . '_' . time() . '.' . $ext;
     $dest     = $dir . '/' . $filename;
 
@@ -43,7 +48,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_GET['action'] ?? '') === 'avatar
 
 // ── Profile Update ──────────────────────────────────────────────────────────
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
+    $rawBody = file_get_contents('php://input');
+    $input = $rawBody ? (json_decode($rawBody, true) ?? $_POST) : $_POST;
+    if ($rawBody && json_last_error() !== JSON_ERROR_NONE) {
+        jsonResponse(['error' => 'Invalid JSON body'], 400);
+    }
 
     $name  = trim($input['full_name']     ?? '');
     $phone = trim($input['phone']         ?? '');

@@ -1,9 +1,10 @@
-﻿<?php
+<?php
 /** UIU Nest — Saved Listings */
+require_once __DIR__ . '/../includes/auth.php';
+requireLogin();
 $pageName = 'Saved';
 $includeListingsJS = true;
 require_once __DIR__ . '/../includes/header.php';
-requireLogin();
 ?>
 
 <div class="section-header">

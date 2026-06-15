@@ -15,6 +15,7 @@ if (isLoggedIn()) {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= APP_URL ?>/assets/css/style.css">
     <script>
+        window.APP_URL = "<?= APP_URL ?>";
         (function(){
             var t = localStorage.getItem('uiu-theme');
             if (!t) {

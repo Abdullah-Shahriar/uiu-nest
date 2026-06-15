@@ -3,9 +3,11 @@
  * UIU Nest — My Home Page
  * Standalone tenant dashboard/portal
  */
+require_once __DIR__ . '/../includes/auth.php';
+requireLogin();
 $pageName = 'My Home';
 require_once __DIR__ . '/../includes/header.php';
-requireLogin();
+
 
 // DB fetch for tenancy and pending move-out requests
 $db     = getDB();

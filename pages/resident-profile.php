@@ -1,11 +1,12 @@
-﻿<?php
+<?php
 /**
  * UIU Nest — Public Resident Profile
  * Viewable by logged-in users. Shows a former resident's info and stay history.
  */
+require_once __DIR__ . '/../includes/auth.php';
+requireLogin();
 $pageName = 'Resident Profile';
 require_once __DIR__ . '/../includes/header.php';
-requireLogin();
 
 $db     = getDB();
 $userId = (int)($_GET['user_id'] ?? 0);

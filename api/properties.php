@@ -45,7 +45,11 @@ if ($method === 'GET') {
 // ─── POST: Create property or room ───
 if ($method === 'POST') {
     requireRole(['owner']);
-    $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
+    $rawBody = file_get_contents('php://input');
+    $input = $rawBody ? (json_decode($rawBody, true) ?? $_POST) : $_POST;
+    if ($rawBody && json_last_error() !== JSON_ERROR_NONE) {
+        jsonResponse(['error' => 'Invalid JSON body'], 400);
+    }
     $type = $input['type'] ?? 'property';
 
     if ($type === 'property') {
@@ -83,7 +87,11 @@ if ($method === 'POST') {
 // ─── PUT: Update property or room ───
 if ($method === 'PUT') {
     requireRole(['owner']);
-    $input = json_decode(file_get_contents('php://input'), true);
+    $rawBody = file_get_contents('php://input');
+    $input = $rawBody ? (json_decode($rawBody, true) ?? $_POST) : $_POST;
+    if ($rawBody && json_last_error() !== JSON_ERROR_NONE) {
+        jsonResponse(['error' => 'Invalid JSON body'], 400);
+    }
     $type = $input['type'] ?? 'property';
 
     if ($type === 'property') {
@@ -126,6 +134,35 @@ if ($method === 'PUT') {
             trim($input['description'] ?? ''),
             (int)$input['id'], $_SESSION['user_id']
         ]);
+        jsonResponse(['success' => true]);
+    }
+}
+
+// ─── DELETE: Soft delete property or room ───
+if ($method === 'DELETE') {
+    requireRole(['owner']);
+    $rawBody = file_get_contents('php://input');
+    $input = $rawBody ? (json_decode($rawBody, true) ?? $_POST) : $_POST;
+    if ($rawBody && json_last_error() !== JSON_ERROR_NONE) {
+        jsonResponse(['error' => 'Invalid JSON body'], 400);
+    }
+    
+    $type = $input['type'] ?? 'property';
+    
+    if ($type === 'property') {
+        $propId = (int)($input['id'] ?? 0);
+        $stmt = $db->prepare('UPDATE properties SET is_active = 0 WHERE id = ? AND owner_id = ?');
+        $stmt->execute([$propId, $_SESSION['user_id']]);
+        jsonResponse(['success' => true]);
+    }
+    
+    if ($type === 'room') {
+        $roomId = (int)($input['id'] ?? 0);
+        $stmt = $db->prepare(
+            'UPDATE rooms r JOIN properties p ON p.id = r.property_id
+             SET r.is_active = 0 WHERE r.id = ? AND p.owner_id = ?'
+        );
+        $stmt->execute([$roomId, $_SESSION['user_id']]);
         jsonResponse(['success' => true]);
     }
 }

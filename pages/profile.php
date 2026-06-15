@@ -1,8 +1,10 @@
 <?php
 /** UIU Nest — My Profile (role-aware) */
+require_once __DIR__ . '/../includes/auth.php';
+requireLogin();
 $pageName = 'My Profile';
 require_once __DIR__ . '/../includes/header.php';
-requireLogin();
+
 
 $db  = getDB();
 $uid = (int)$_SESSION['user_id'];

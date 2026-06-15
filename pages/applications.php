@@ -1,17 +1,18 @@
 <?php
 /**
- * UIU Nest â€” Applications (standalone section)
+ * UIU Nest — Applications (standalone section)
  * - Students/Applicants: see their own submitted applications
  * - Owners/House Managers: see all incoming applications for their listings
  */
+require_once __DIR__ . '/../includes/auth.php';
+requireLogin();
 $pageName = 'Applications';
 require_once __DIR__ . '/../includes/header.php';
-requireLogin();
 
 $db  = getDB();
 $uid = (int)$_SESSION['user_id'];
 
-// â”€â”€ Incoming applications (owner / house manager view) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ——— Incoming applications (owner / house manager view) ——————————————————————
 $incomingApps = [];
 if (hasAnyRole(['owner', 'tenant', 'admin'])) {
     $stmt = $db->prepare(

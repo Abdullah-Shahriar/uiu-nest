@@ -1,8 +1,9 @@
 <?php
 /** UIU Nest — Public Complaints Page */
+require_once __DIR__ . '/../includes/auth.php';
+requireLogin();
 $pageName = 'Complaints';
 require_once __DIR__ . '/../includes/header.php';
-requireLogin();
 
 $db = getDB();
 

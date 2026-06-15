@@ -102,7 +102,8 @@ if ($method === 'GET') {
         jsonResponse(['listings' => $listings]);
 
     } catch (Exception $ex) {
-        jsonResponse(['listings' => [], 'debug' => $ex->getMessage()], 200);
+        error_log('Listings fetch error: ' . $ex->getMessage());
+        jsonResponse(['listings' => [], 'error' => 'Failed to load listings.'], 200);
     }
 }
 
@@ -161,7 +162,7 @@ if ($method === 'POST') {
             $req['dept'] ?? null,
             $req['min_year'] ?? null,
             $req['max_year'] ?? null,
-            $req['smoking'] ?? 1,
+            $req['smoking'] ?? 0,
             $req['mandatory'] ?? 0,
         ]);
     }
@@ -214,6 +215,16 @@ if ($method === 'DELETE') {
     $input = json_decode(file_get_contents('php://input'), true);
     $listingId = (int)($input['listing_id'] ?? 0);
     $db = getDB();
+
+    // Verify the user owns this listing or is admin
+    $stmt = $db->prepare('SELECT l.created_by, r.property_id FROM listings l JOIN rooms r ON r.id = l.room_id WHERE l.id = ? AND l.deleted_at IS NULL');
+    $stmt->execute([$listingId]);
+    $listing = $stmt->fetch();
+    if (!$listing) jsonResponse(['error' => 'Not found'], 404);
+
+    if ($_SESSION['role'] !== 'admin' && $listing['created_by'] !== $_SESSION['user_id']) {
+        jsonResponse(['error' => 'Not authorized'], 403);
+    }
 
     $stmt = $db->prepare('UPDATE listings SET deleted_at = NOW() WHERE id = ? AND deleted_at IS NULL');
     $stmt->execute([$listingId]);

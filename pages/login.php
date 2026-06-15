@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 
@@ -16,6 +16,7 @@ if (isLoggedIn()) {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= APP_URL ?>/assets/css/style.css">
     <script>
+        window.APP_URL = "<?= APP_URL ?>";
         (function() {
             var t = localStorage.getItem('uiu-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
             document.documentElement.setAttribute('data-theme', t);
@@ -165,20 +166,31 @@ if (isLoggedIn()) {
     <!-- Hero panel -->
     <div class="login-hero">
         <div class="login-hero-content">
-            <div class="hero-logo-icon"></div>
+            <div class="hero-logo-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:100%;height:100%;">
+                    <path d="M3 9.5L12 3l9 6.5V21H3V9.5z" fill="rgba(255,255,255,0.15)"/>
+                    <rect x="9" y="14" width="6" height="7" rx="1" fill="rgba(255,255,255,0.35)"/>
+                </svg>
+            </div>
             <div class="hero-name">UIU<span>·</span>Nest</div>
             <div class="hero-tagline">Student Accommodation Management</div>
             <div class="hero-features">
                 <div class="hero-feat">
-                    <div class="hero-feat-icon"></div>
+                    <div class="hero-feat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
                     <span>Verified properties near UIU campus</span>
                 </div>
                 <div class="hero-feat">
-                    <div class="hero-feat-icon"></div>
+                    <div class="hero-feat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
                     <span>Streamlined application process</span>
                 </div>
                 <div class="hero-feat">
-                    <div class="hero-feat-icon"></div>
+                    <div class="hero-feat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    </div>
                     <span>Secure identity verification</span>
                 </div>
                 <div class="hero-feat">
