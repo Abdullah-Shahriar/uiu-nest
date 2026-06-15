@@ -136,10 +136,17 @@
             // Drive Google Translate without a page reload.
             const gtCombo = document.querySelector('.goog-te-combo');
             if (gtCombo) {
-                const targetLang = lang === 'bn' ? 'bn' : 'en';
-                if (gtCombo.value !== targetLang) {
-                    gtCombo.value = targetLang;
+                if (lang === 'bn') {
+                    gtCombo.value = 'bn';
                     gtCombo.dispatchEvent(new Event('change'));
+                } else {
+                    // To revert to original (English), the option value is typically ''
+                    gtCombo.value = '';
+                    gtCombo.dispatchEvent(new Event('change'));
+                    
+                    // Force clear cookies to stop GT mutation observer loops
+                    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + location.hostname;
                 }
             } else {
                 // Fallback: set cookie and reload only once if widget not ready
