@@ -11,9 +11,14 @@ if (empty($userMessage)) {
     exit;
 }
 
-// Groq API Details
-$apiKey = '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';
-$apiUrl = 'https://api.groq.com/openai/v1/chat/completions';
+// Groq API Details — values loaded from .env via config/database.php
+$apiKey = $_ENV['GROQ_API_KEY'] ?? '';
+$apiUrl = $_ENV['GROQ_API_URL'] ?? 'https://api.groq.com/openai/v1/chat/completions';
+
+if (empty($apiKey)) {
+    echo json_encode(['error' => 'AI service is not configured. GROQ_API_KEY missing in .env']);
+    exit;
+}
 
 // System Prompt
 $systemPrompt = "You are the AI Concierge for 'UIU Nest', a premium student housing platform. 
@@ -42,12 +47,12 @@ JSON SCHEMA EXPECTED:
 }";
 
 $data = [
-    'model' => 'llama-3.3-70b-versatile',
-    'messages' => [
+    'model'       => $_ENV['GROQ_MODEL'] ?? 'llama-3.3-70b-versatile',
+    'messages'    => [
         ['role' => 'system', 'content' => $systemPrompt],
-        ['role' => 'user', 'content' => $userMessage]
+        ['role' => 'user',   'content' => $userMessage]
     ],
-    'temperature' => 0.1 // Low temperature for consistent JSON output
+    'temperature' => 0.1, // Low temperature for consistent JSON output
 ];
 
 $ch = curl_init($apiUrl);

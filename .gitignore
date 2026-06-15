@@ -1,0 +1,26 @@
+# ============================================================
+#  UIU Nest — .gitignore
+# ============================================================
+
+# Environment — NEVER commit secrets
+.env
+
+# Uploaded user content
+/uploads/documents/
+/uploads/properties/
+
+# OS / editor clutter
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# Composer (if added later)
+/vendor/
+
+# Debug / one-off scripts (keep out of VCS)
+fix_passwords.php
+test_auth.php
+test_auth.zip
