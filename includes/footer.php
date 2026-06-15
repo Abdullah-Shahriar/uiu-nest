@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => CalWidget.init());
 
     <!-- Scripts -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-    <script src="<?= APP_URL ?>/assets/js/app.js"></script>
+    <script src="<?= APP_URL ?>/assets/js/app.js?v=<?= filemtime(__DIR__ . '/../assets/js/app.js') ?>"></script>
 <?php if (isset($includeMapJS) && $includeMapJS): ?>
     <script src="<?= APP_URL ?>/assets/js/map.js"></script>
 <?php endif; ?>

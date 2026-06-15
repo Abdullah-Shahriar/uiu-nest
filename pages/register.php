@@ -193,7 +193,7 @@ if (isLoggedIn()) {
 }
 </style>
 
-<script src="<?= APP_URL ?>/assets/js/app.js"></script>
+<script src="<?= APP_URL ?>/assets/js/app.js?v=<?= filemtime(__DIR__ . '/../assets/js/app.js') ?>"></script>
 <script>
 function switchRole(role) {
     if (role === 'student') {

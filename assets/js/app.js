@@ -133,28 +133,23 @@
             this._syncButtons(lang);
             this.apply(lang);
 
-            // Drive Google Translate without a page reload.
-            const gtCombo = document.querySelector('.goog-te-combo');
-            if (gtCombo) {
-                if (lang === 'bn') {
-                    gtCombo.value = 'bn';
-                    gtCombo.dispatchEvent(new Event('change'));
-                } else {
-                    // To revert to original (English), the option value is typically ''
-                    gtCombo.value = '';
-                    gtCombo.dispatchEvent(new Event('change'));
-                    
-                    // Force clear cookies to stop GT mutation observer loops
+            const currentCookie = document.cookie.match(/(^|;)\s*googtrans=([^;]*)/);
+
+            if (lang === 'en') {
+                // To revert to English, we must kill the googtrans cookie and reload
+                if (currentCookie && currentCookie[2] !== '/auto/en' && currentCookie[2] !== '/en/en') {
                     document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                     document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + location.hostname;
+                    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=." + location.hostname;
+                    window.location.reload();
                 }
             } else {
-                // Fallback: set cookie and reload only once if widget not ready
-                const gtCookieVal  = lang === 'bn' ? '/en/bn' : '/en/en';
-                const currentCookie = document.cookie.match(/(^|;)\s*googtrans=([^;]*)/);
+                // To translate to Bengali, set the cookie and reload
+                const gtCookieVal = '/en/bn';
                 if (!currentCookie || currentCookie[2] !== gtCookieVal) {
                     document.cookie = `googtrans=${gtCookieVal}; path=/`;
                     document.cookie = `googtrans=${gtCookieVal}; path=/; domain=${location.hostname}`;
+                    document.cookie = `googtrans=${gtCookieVal}; path=/; domain=.${location.hostname}`;
                     window.location.reload();
                 }
             }
