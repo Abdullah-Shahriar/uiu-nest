@@ -136,11 +136,12 @@
             const currentCookie = document.cookie.match(/(^|;)\s*googtrans=([^;]*)/);
 
             if (lang === 'en') {
-                // To revert to English, we must kill the googtrans cookie and reload
+                // To revert to English, we override the googtrans cookie to /en/en instead of deleting it
                 if (currentCookie && currentCookie[2] !== '/auto/en' && currentCookie[2] !== '/en/en') {
-                    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + location.hostname;
-                    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=." + location.hostname;
+                    const gtCookieVal = '/en/en';
+                    document.cookie = `googtrans=${gtCookieVal}; path=/`;
+                    document.cookie = `googtrans=${gtCookieVal}; path=/; domain=${location.hostname}`;
+                    document.cookie = `googtrans=${gtCookieVal}; path=/; domain=.${location.hostname}`;
                     window.location.reload();
                 }
             } else {
