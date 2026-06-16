@@ -1,9 +1,5 @@
 # 🏡 UIU Nest — Student Accommodation Platform
 
-<p align="center">
-  <img alt="UIU Nest Banner" src="https://via.placeholder.com/1000x200.png?text=UIU+Nest+-+Student+Accommodation" />
-</p>
-
 ## 📖 Project Overview
 
 **UIU Nest** is a comprehensive student accommodation management platform tailored for United International University (UIU). It serves as a centralized hub bridging the gap between students looking for off-campus housing and property owners seeking reliable tenants. The platform handles browsing, filtering, applications, user roles, and property management seamlessly.
