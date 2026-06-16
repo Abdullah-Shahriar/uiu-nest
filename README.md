@@ -1,108 +1,114 @@
-# UIU Nest — Student Accommodation Platform
+# UIU Nest — Advanced Student Accommodation Platform
 
 ## 📖 Project Overview
 
-**UIU Nest** is a comprehensive student accommodation management platform tailored specifically for United International University (UIU). It acts as a centralized ecosystem connecting students seeking off-campus housing with property owners seeking reliable tenants. The platform handles end-to-end property management, including browsing, dynamic filtering, application tracking, move-out processes, complaint management, and two-way review systems.
+**UIU Nest** is an advanced, fully-featured student accommodation management ecosystem tailored specifically for United International University (UIU). It provides an end-to-end management flow starting from listing creation, filtering, AI search, all the way to complex multi-step application approvals, tenant move-ins, daily complaints, rent tracking, and an interactive move-out/review lifecycle.
 
-## ✨ Complete Feature List
-
-The system goes beyond basic listings and provides a full-suite property management experience.
+## ✨ Exhaustive Feature List
 
 ### 🎓 For Students & Tenants
-- **Advanced Listing Search & Filtering**: Filter by rent budget (e.g., ৳5,000–৳14,000+), specific amenities, and distance to UIU campus (with map integration).
-- **AI-Powered Search**: Utilize the integrated AI search endpoint (`api/ai_search.php`) to find listings naturally.
-- **Application Tracking**: Apply to listings and track status (`pending`, `enrolled`, `rejected`).
-- **Roommate Finder**: Once a tenant, students can post "Roommate Needed" listings for their specific rooms.
-- **Save Listings**: Bookmark favorite properties to review later.
-- **Tenant Dashboard (`my-home.php`)**: A dedicated portal to view current residence details, room capacity, and co-tenants.
-- **Complaints System**: Submit maintenance, noise, safety, or management complaints to the property owner/manager (with an anonymous submission option).
-- **Move-Out Requests**: Initiate formal move-out requests from their current room.
+- **Intelligent Discovery:**
+  - **Dynamic Filtering:** Search by precise rent ranges (৳5,000 to ৳14,000+), specific professional amenities (e.g., Security, Generator), and geographical distance to UIU.
+  - **AI-Powered Natural Language Search:** (`api/ai_search.php`) Leverage Groq API/OpenAI to find listings using conversational queries (e.g., "Find me a quiet room with a balcony under 8k").
+  - **Map Integration:** Leaflet.js rendering UIU campus markers and accurately plotting property coordinates.
+- **Applications & Management:**
+  - **Track Applications:** Full lifecycle tracking (`pending`, `enrolled`, `rejected`).
+  - **Profile Avatar System:** Interactive canvas-based profile picture upload featuring zoom, pan, and a circular-to-square JPEG cropping tool.
+  - **Save & Bookmark:** Pin favorite properties for later review.
+- **Tenant Dashboard ("My Home"):**
+  - View current tenancy details, roommate information, and room capacities.
+  - Submit detailed, categorized complaints (Maintenance, Noise, Safety) with an **Anonymous Submission** toggle.
+  - **Roommate Finder:** Active tenants can publish "Roommate Needed" sub-listings for their specific rooms.
+  - **Move-out Workflow:** Tenants initiate formal move-out requests triggering a dedicated review pipeline.
 
 ### 🏠 For Property Owners & House Managers
-- **Property Management**: Create and manage multiple properties with location coordinates (Leaflet map), descriptions, and cover photos with draggable cropping.
-- **Room & Listing Management**: Add rooms (with specific rent, capacities, and amenities) and publish them as listings.
-- **Listing Requirements**: Set strict tenant requirements (Preferred Gender, Department, Study Year, Smoking/Pet policies).
-- **Application Review System**: Approve or reject incoming student applications.
-- **House Manager Assignment**: Owners can delegate authority by assigning an existing tenant to act as the "House Manager" for a specific property.
-- **Announcements & Calendar Events**: Broadcast announcements, maintenance schedules, or "Rent Due" notices to all tenants of a property.
-- **Occupancy Tracking**: Monitor which rooms are vacant, partially filled, or at capacity.
+- **Property & Listing Management:**
+  - Create and manage properties, mapping them with lat/lng coordinates.
+  - **Draggable Cover Photos:** Advanced CSS `object-position` implementation allowing owners to upload and perfectly crop/position property banner images.
+  - **Lightbox Gallery:** Integrated native lightbox for property image galleries.
+- **Listing Requirements Engine:**
+  - Strictly define tenant criteria: Preferred Gender, Department, Study Year (Min/Max), Smoking Rules, and Pet Policies.
+- **Application Processing:**
+  - Multi-tier approval system. Owners review student profiles (including verification documents) and approve/reject them.
+- **Delegation System:**
+  - Owners can assign trustworthy existing tenants to the **House Manager** role, granting them the authority to process applications for that specific property.
+- **Announcements & Calendar Event System:**
+  - Push global property announcements, "Rent Due" notices, or "Maintenance" warnings directly to all tenants.
 
-### ⭐ Comprehensive Review & Rating System
-The platform features a specialized two-way review lifecycle tied to the move-out process:
-1. **Move-out Initialization**: Tenant requests to move out.
-2. **Owner Reviews Tenant**: The owner rates the departing tenant on Cleanliness, Behaviour, and Punctuality (1-5 stars). These aggregate into a public "Student Rating".
-3. **Tenant Reviews Property**: The departing tenant reviews the property on Cleanliness, Safety, and Value for Money (1-5 stars). These become public "Resident Reviews".
+### ⭐ Closed-Loop Review & Rating System
+The platform features a highly specialized two-way evaluation tied to the move-out process:
+1. **Initiation**: The tenant submits a formal move-out request.
+2. **Owner Evaluates Tenant**: The landlord rates the departing tenant (1-5 stars) specifically on *Cleanliness, Behaviour, and Punctuality*. This aggregates into a global "Student Rating" visible on their profile.
+3. **Tenant Evaluates Property**: The tenant rates the property (1-5 stars) specifically on *Cleanliness, Safety, and Value for Money*. This becomes a public "Resident Review" visible to future applicants.
+4. **Completion**: Only after both reviews are completed is the move-out finalized in the database.
 
-### 🔑 Security & Role-Based Access Control
-- **Domain-Restricted Registration**: Student registration strictly requires valid UIU emails (`@uiu.ac.bd`, `@bscse.uiu.ac.bd`, `@student.uiu.ac.bd`). Allowed domains are managed via the database.
-- **Owner Application Workflow**: Prospective owners must apply with NID, Electricity Bill, and a personal photo. Admins must manually approve them before they gain Owner privileges.
-- **Granular Roles**: 
-  - `Guest`: Can browse public listings.
-  - `Student`: Can apply to listings and save favorites.
-  - `Tenant`: Can post roommate listings and use the "My Home" dashboard.
-  - `House Manager`: Tenant with elevated privileges to manage applications for their property.
-  - `Owner`: Full control over their properties, rooms, listings, and tenants.
-  - `Admin`: System oversight and approval of new owners.
+### 🔑 Security, Architecture, & Access Control
+- **Domain-Restricted Auth**: Strict enforcement limiting registration to authenticated UIU emails (`@uiu.ac.bd`, `@bscse.uiu.ac.bd`, etc.), governed by a dynamic `allowed_domains` database table.
+- **Rigorous Owner Vetting**: Non-student property owners must submit an extensive application (NID, Electricity Bill, Photo) requiring manual admin verification before account activation.
+- **Role Hierarchy**: 
+  1. `Guest` (Public search)
+  2. `Student` (Apply)
+  3. `Tenant` (My Home, Complaints, Roommates)
+  4. `House Manager` (Review applications for assigned property)
+  5. `Owner` (Full property lifecycle management)
+  6. `Admin` (System-wide configuration, domain management, owner approvals)
 
-## 🛋️ Amenities & Strict Filtering Logic
-Properties can be tagged with professional amenities: High-Speed WiFi, AC, Attached Bath, Shared Bath, Furnished, Balcony, Parking, Laundry, 24/7 Security, CCTV, Study Room, Rooftop Access, Generator, and Elevator/Lift.
+### 🌍 UI/UX & Localization Enhancements
+- **Theming**: Fully responsive native CSS implementation supporting both Light and Dark modes.
+- **Brand Identity**: Features the signature UIU Nest Vibrant Orange (`#E07820`).
+- **Localization**: Built-in Google Translate integration offering instant English ↔ Bangla language switching.
+- **Live Widgets**: Persistent live clock and real-time interface elements integrated into the top bar.
 
-**Smart Filtering**: Selecting an amenity acts as a strict filter. For example, selecting `Security / CCTV` automatically removes any properties in the database that lack those specific tags.
+## 🛋️ Amenities & Smart Strict Filtering
+Properties are classified using a professional set of vector (SVG) icon-backed amenities: High-Speed WiFi, AC, Attached Bath, Shared Bath, Furnished, Balcony, Parking, Laundry, 24/7 Security, CCTV, Study Room, Rooftop Access, Generator, and Elevator/Lift.
+- **Strict Logic**: Filtering is absolute. Selecting `CCTV` completely removes any matching rooms/properties from the UI that do not explicitly possess the `CCTV` JSON flag in the database.
 
-## 🛠️ Tech Stack & Architecture
+## 🛠️ Tech Stack & Resilience
 
-- **Frontend**: Vanilla JavaScript (ES6), HTML5, Vanilla CSS3 (Custom properties, Flexbox/Grid). Fully responsive mobile-first design breaking down to 380px.
-- **Backend**: Vanilla PHP 8+ handling API endpoints (`/api`) and view logic (`/pages`).
-- **Database**: MySQL (accessed via PDO) with robust foreign-key constraints and cascading deletes.
-- **Integrations**: Leaflet.js for interactive mapping.
-- **Design System**: Brand color is Vibrant Orange (`#E07820`). Features a native toggle for Light and Dark modes.
+- **Frontend**: Vanilla JavaScript (ES6), HTML5, Vanilla CSS3 (Custom properties, Flexbox/Grid). Mobile-first responsiveness (down to 380px breakpoints).
+- **Backend**: Vanilla PHP 8+ handling API endpoints (`/api`) and multi-page routing (`/pages`).
+- **API Resilience**: All backend APIs (`/api/*.php`) heavily utilize `try/catch` wrappers. Instead of crashing the frontend with unparsed PHP errors, the system ensures strictly formatted JSON responses, even during fatal database failures. Null-safety implemented natively in SQL (e.g., `IFNULL` on amenity JSON parsing).
+- **Database**: MySQL (via PDO) leveraging full InnoDB relational constraints, foreign keys, and cascading deletes across 20 distinct tables (`schema.sql`).
+- **Dependencies**: Leaflet.js (Mapping), Google Fonts (Inter, Outfit), Google Translate API.
 
 ## 📁 Project Structure
 
 ```text
 uiu-nest/
-├── api/                  # Backend API endpoints (JSON responses, auth, CRUD, AI)
-├── assets/               # CSS styles and JavaScript files
-│   ├── css/              # Modular CSS (base, layout, components, profile, etc.)
-│   └── js/               # Frontend logic (app.js, listings.js, map.js)
-├── config/               # Database connection and environment variables
-├── includes/             # Shared PHP helpers, header, footer, auth checks
-├── pages/                # Frontend views (dashboard, profiles, admin, my-home)
-├── sql/                  # Database schemas and full migration data
-├── uploads/              # User-uploaded files (images, documents, NIDs)
-├── .env.example          # Example environment variables
-├── index.php             # Main entry point (Redirects to dashboard)
-└── test_auth.php         # Database setup and reset script
+├── api/                  # Pure JSON endpoints (AI search, CRUD, Auth, Uploads)
+├── assets/               # Frontend core
+│   ├── css/              # Modular architecture (base, layout, components, profile)
+│   └── js/               # Modular logic (app.js, map.js, listings.js, cover-photo.js, lightbox.js)
+├── config/               # DB connection & environment (.env)
+├── includes/             # Shared view logic (header, footer, auth, UI widgets)
+├── pages/                # Protected & Public Views (dashboard, my-home, admin)
+├── sql/                  # Relational DB Schema (`schema.sql` + historical migrations)
+├── scratch/              # Temporary server workspace for scripts
+├── uploads/              # Isolated directory for secure file/avatar uploads
+├── .env.example          # Environment variable template (DB creds, Groq API keys)
+├── index.php             # System entry router
+└── test_auth.php         # Developer script to instantly reset/seed the database
 ```
 
 ## 🚀 Installation & Setup
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/yourusername/uiu-nest.git
-   ```
+1. **Clone & Mount:**
+   - Clone the repository into your local web server's document root (e.g., `htdocs` for XAMPP).
+   - Ensure the directory is precisely named `uiu-nest`.
 
-2. **Server Environment:**
-   - Move the project folder to your local server document root (e.g., `htdocs` for XAMPP, `www` for WAMP).
-   - Ensure the folder is named `uiu-nest` or adjust paths accordingly.
+2. **Environment Configuration:**
+   - Create an empty MySQL database.
+   - Duplicate `.env.example` to `.env`.
+   - Add your database credentials and, optionally, your Groq API key (for the AI Search feature).
 
-3. **Database Configuration:**
-   - Create a MySQL database.
-   - Copy `.env.example` to `.env` and update your database credentials.
+3. **Database Initialization:**
+   - Navigate to the setup utility: `http://localhost/GitHub/uiu-nest/test_auth.php`
+   - *Warning: Executing this script drops all tables and executes a pristine build from `schema.sql`, pre-loading all demo properties, rooms, users, and amenities.*
 
-4. **Initialize the System:**
-   - Open your browser and navigate to the setup script:
-     ```
-     http://localhost/GitHub/uiu-nest/test_auth.php
-     ```
-   - *Note: This script drops existing tables, rebuilds the full schema from `schema.sql`, and seeds demo properties, rooms, amenities, and users.*
-
-5. **Launch the Application:**
+4. **Launch:**
    - Visit the main entry point: `http://localhost/GitHub/uiu-nest/`
 
-## 🔑 Demo Accounts
-
-Use these accounts to explore the different roles within the system. The password for all accounts is `admin123`.
+## 🔑 Demo Accounts (Password: `admin123`)
 
 | User Name | Email Address | Role |
 |---|---|---|
@@ -111,11 +117,6 @@ Use these accounts to explore the different roles within the system. The passwor
 | Abdullah Shahriar | `shahriar@gmail.com` | **Owner** |
 | Ritu Datta | `ritu@bscse.uiu.ac.bd` | **House Manager** (Tenant) |
 | Tahsin Faiyaz | `tahsin@bscse.uiu.ac.bd` | **Student** (Applicant) |
-
-## 🛠️ Development Notes & API Resilience
-- **API Architecture**: Endpoints in `api/` are wrapped in try-catch blocks to strictly return JSON, preventing frontend console crashes when PHP errors occur.
-- **Authentication Resilience**: Login queries safely bypass `is_active` lockouts and properly prioritize POST requests over GET redirects.
-- **Null Safety**: Amenity JSON parsing handles `NULL` values safely (`IFNULL`) to prevent database query failures during filtering.
 
 ---
 *Developed for United International University.*

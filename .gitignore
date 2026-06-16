@@ -29,3 +29,5 @@ test_auth.zip
 sql/migrations.sql
 sql/v2_migrations.sql
 sql/v3_migrations.sql
+scratch/codebase_summary.txt
+scratch/extract_info.php
